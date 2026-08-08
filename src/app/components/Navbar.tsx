@@ -53,7 +53,7 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-[110] transition-all duration-500 ${
           isScrolled
             ? 'bg-navy/95 backdrop-blur-md border-b border-steel/10 shadow-lg py-3'
             : 'bg-black/30 backdrop-blur-md border-b border-white/10 shadow-lg py-4'
@@ -65,7 +65,7 @@ export default function Navbar() {
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="flex items-center gap-3">
                 <img
-                  src="/kiw-logo-(2).png"
+                  src="/kiw-logo.png"
                   alt="KIW Logo"
                   width={150}
                   height={100}
@@ -88,15 +88,7 @@ export default function Navbar() {
             </nav>
 
             {/* Actions */}
-            <div className="hidden lg:flex items-center gap-4 flex-shrink-0">
-              {/* <a
-                href="/documents/company-profile.pdf"
-                download
-                className="font-sans text-xs font-semibold text-steel hover:text-white flex items-center gap-1.5 transition-colors duration-200 group whitespace-nowrap"
-              >
-                <Download className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" />
-                <span>Company Profile</span>
-              </a> */}
+            <div className="hidden xl:flex items-center gap-4 flex-shrink-0">
               <Link
                 href="/contact?rfq=true"
                 className="font-sans text-sm font-semibold bg-orange text-white px-5 py-2.5 rounded hover:bg-orange/90 transition-all duration-300 shadow-md shadow-orange/20 flex items-center gap-2 group border border-orange/10 hover:border-orange/20 whitespace-nowrap"
@@ -110,13 +102,13 @@ export default function Navbar() {
             <div className="xl:hidden flex items-center gap-4">
               <Link
                 href="/contact?rfq=true"
-                className="lg:hidden font-sans text-xs font-semibold bg-orange text-white px-3 py-2 rounded hover:bg-orange/90 transition-colors shadow-sm"
+                className="xl:hidden font-sans text-xs font-semibold bg-orange text-white px-3 py-2 rounded hover:bg-orange/90 transition-colors shadow-sm"
               >
                 RFQ
               </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-steel hover:text-white p-2 rounded-md focus:outline-none"
+                className="text-steel hover:text-white p-2 rounded-md focus:outline-none cursor-pointer"
                 aria-label="Toggle menu"
               >
                 {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -134,7 +126,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 bg-navy/98 backdrop-blur-lg flex flex-col justify-between pt-28 pb-10 px-6 overflow-y-auto"
+            className="fixed inset-0 z-[100] bg-navy/98 backdrop-blur-xl flex flex-col justify-between pt-28 pb-10 px-6 overflow-y-auto"
           >
             {/* Design Grid Line Accents */}
             <div className="absolute inset-0 pointer-events-none opacity-5">

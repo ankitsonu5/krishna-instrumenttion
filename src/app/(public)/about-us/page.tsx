@@ -3,7 +3,7 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { 
   Compass, 
   Target, 
@@ -64,6 +64,17 @@ const trusts = [
 ];
 
 export default function AboutUsPage() {
+  const targetRef = React.useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start start", "end end"]
+  });
+
+  // Transform left card (starts centered at x: 50% or offset, then moves left to 0%)
+  const leftCardX = useTransform(scrollYProgress, [0, 0.7], ["50%", "0%"]);
+  // Transform right card (starts stacked under left card at x: -50%, then moves right to 0%)
+  const rightCardX = useTransform(scrollYProgress, [0, 0.7], ["-50%", "0%"]);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -157,7 +168,7 @@ export default function AboutUsPage() {
               <div className="lg:col-span-5 relative">
                 <div className="aspect-[4/3] rounded-lg shadow-xl overflow-hidden relative border border-steel/20 bg-navy group">
                   <motion.img 
-                    src="/about-homepage.png" 
+                    src="/about-us.png" 
                     alt="Proven Legacy - Krishna Instrumentation Works" 
                     className="w-full h-full object-cover"
                     whileHover={{ scale: 1.1 }}
@@ -189,19 +200,26 @@ export default function AboutUsPage() {
                 initial={{ opacity: 0, x: -40 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                whileHover={{ y: -6, scale: 1.02 }}
+                whileHover={{ y: -6 }}
                 transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-                className="bg-graphite/30 border border-steel/10 rounded-lg p-8 hover:bg-graphite/40 transition-all flex gap-5 group cursor-default relative overflow-hidden"
+                className="group relative rounded-2xl overflow-hidden border border-steel/20 bg-navy shadow-xl flex flex-col justify-end min-h-[340px] p-8 cursor-default"
               >
-                <div className="absolute top-0 right-0 w-24 h-24 bg-orange/5 rounded-full blur-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="bg-orange/10 text-orange p-3.5 rounded h-fit flex-shrink-0 transition-transform duration-700 group-hover:rotate-[360deg] z-10">
-                  <Compass className="w-8 h-8" />
-                </div>
+                {/* Full Width & Full Height Background Image */}
+                <img 
+                  src="/about-us/our-vision.png" 
+                  alt="Our Vision" 
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                />
+
+                {/* Slight Transparent Shadow Gradient behind text for maximum readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/60 to-transparent z-0" />
+
+                {/* Content Box directly over Image */}
                 <div className="flex flex-col gap-3 relative z-10">
-                  <h3 className="font-heading text-xl font-bold text-white uppercase tracking-wider group-hover:text-orange transition-colors">
+                  <h3 className="font-heading text-2xl font-bold text-white uppercase tracking-wider group-hover:text-orange transition-colors duration-300">
                     Our Vision
                   </h3>
-                  <p className="font-sans text-sm sm:text-base text-steel/80 leading-relaxed">
+                  <p className="font-sans text-base text-steel/90 leading-relaxed">
                     To become India&apos;s most trusted engineering partner by delivering innovative, safe, and highly reliable industrial solutions that build operational confidence.
                   </p>
                 </div>
@@ -212,19 +230,26 @@ export default function AboutUsPage() {
                 initial={{ opacity: 0, x: 40 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                whileHover={{ y: -6, scale: 1.02 }}
+                whileHover={{ y: -6 }}
                 transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-                className="bg-graphite/30 border border-steel/10 rounded-lg p-8 hover:bg-graphite/40 transition-all flex gap-5 group cursor-default relative overflow-hidden"
+                className="group relative rounded-2xl overflow-hidden border border-steel/20 bg-navy shadow-xl flex flex-col justify-end min-h-[340px] p-8 cursor-default"
               >
-                <div className="absolute top-0 right-0 w-24 h-24 bg-orange/5 rounded-full blur-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="bg-orange/10 text-orange p-3.5 rounded h-fit flex-shrink-0 transition-transform duration-500 group-hover:scale-110 z-10">
-                  <Target className="w-8 h-8" />
-                </div>
+                {/* Full Width & Full Height Background Image */}
+                <img 
+                  src="/about-us/our-mission.png" 
+                  alt="Our Mission" 
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                />
+
+                {/* Slight Transparent Shadow Gradient behind text for maximum readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/60 to-transparent z-0" />
+
+                {/* Content Box directly over Image */}
                 <div className="flex flex-col gap-3 relative z-10">
-                  <h3 className="font-heading text-xl font-bold text-white uppercase tracking-wider group-hover:text-orange transition-colors">
+                  <h3 className="font-heading text-2xl font-bold text-white uppercase tracking-wider group-hover:text-orange transition-colors duration-300">
                     Our Mission
                   </h3>
-                  <p className="font-sans text-sm sm:text-base text-steel/80 leading-relaxed">
+                  <p className="font-sans text-base text-steel/90 leading-relaxed">
                     To deliver world-class engineering services through technical excellence, quality workmanship, client transparency, and complete customer satisfaction.
                   </p>
                 </div>
@@ -283,78 +308,81 @@ export default function AboutUsPage() {
           </div>
         </section>
 
-        {/* STRENGTH & WHY TRUST US (SPLIT SECTION) */}
-        <section className="py-20 bg-white border-t border-steel/15">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        {/* STRENGTH & WHY TRUST US (PINNED SCROLL SPLIT ANIMATION SECTION) */}
+        <section ref={targetRef} className="relative h-[220vh] bg-white border-t border-steel/15">
+          <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative">
               
-              {/* Left Column: Strengths */}
-              <div className="bg-offwhite border border-steel/30 rounded-lg p-8 flex flex-col gap-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-steel/50">
-                <div className="flex items-center gap-3">
-                  <div className="bg-navy/5 p-2 rounded text-navy">
-                    <Users className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-heading text-xl font-bold text-navy uppercase tracking-wider">
-                    Our Strength
-                  </h3>
-                </div>
-                <div className="h-0.5 w-16 bg-navy/20" />
-                
-                <ul className="flex flex-col gap-3.5 font-sans text-sm text-graphite/85">
-                  {strengths.map((strength, i) => (
-                    <li key={i} className="flex gap-2.5 items-start">
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        whileInView={{ scale: 1, opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ 
-                          type: "spring", 
-                          stiffness: 260, 
-                          damping: 20, 
-                          delay: i * 0.08 
-                        }}
-                        className="flex-shrink-0 mt-0.5"
-                      >
-                        <CheckCircle2 className="w-4 h-4 text-safety-green" />
-                      </motion.div>
-                      <span>{strength}</span>
-                    </li>
-                  ))}
-                </ul>
+              {/* Section Header */}
+              <div className="text-center max-w-2xl mx-auto mb-10">
+                <span className="font-mono text-xs text-orange font-semibold uppercase tracking-widest">
+                  ENGINEERING ADVANTAGE
+                </span>
+                <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-navy mt-1">
+                  Our Capabilities & Trust
+                </h2>
+                <div className="h-1 w-16 bg-orange mx-auto mt-2" />
               </div>
 
-              {/* Right Column: Why Clients Trust Us */}
-              <div className="bg-navy border border-steel/10 rounded-lg p-8 text-white flex flex-col gap-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-orange/30">
-                <div className="flex items-center gap-3">
-                  <div className="bg-orange/10 p-2 rounded text-orange">
-                    <Award className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-heading text-xl font-bold text-white uppercase tracking-wider">
-                    Why Clients Trust Us
-                  </h3>
-                </div>
-                <div className="h-0.5 w-16 bg-orange/40" />
+              {/* Animated Cards Wrapper */}
+              <div 
+                className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative items-stretch"
+              >
                 
-                <ul className="flex flex-col gap-3.5 font-sans text-sm text-steel/85">
-                  {trusts.map((trust, i) => (
-                    <li key={i} className="flex gap-2.5 items-start">
-                      <motion.div
-                        initial={{ x: -15, opacity: 0 }}
-                        whileInView={{ x: 0, opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ 
-                          ease: "easeOut",
-                          duration: 0.4,
-                          delay: i * 0.08 
-                        }}
-                        className="flex-shrink-0 mt-0.5"
-                      >
-                        <CheckCircle2 className="w-4 h-4 text-orange" />
-                      </motion.div>
-                      <span>{trust}</span>
-                    </li>
-                  ))}
-                </ul>
+                {/* Left Card: Our Strength (Animated from center to left) */}
+                <motion.div 
+                  style={{ x: leftCardX }}
+                  className="bg-offwhite border border-steel/30 rounded-2xl p-8 lg:p-10 flex flex-col gap-6 shadow-xl relative z-20"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="bg-navy/10 p-3 rounded-xl text-navy">
+                      <Users className="w-6 h-6" />
+                    </div>
+                    <h3 className="font-heading text-xl font-bold text-navy uppercase tracking-wider">
+                      Our Strength
+                    </h3>
+                  </div>
+                  <div className="h-0.5 w-16 bg-navy/20" />
+                  
+                  <ul className="flex flex-col gap-4 font-sans text-sm text-graphite/85">
+                    {strengths.map((strength, i) => (
+                      <li key={i} className="flex gap-3 items-start">
+                        <div className="flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="w-5 h-5 text-safety-green" />
+                        </div>
+                        <span className="font-medium">{strength}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+
+                {/* Right Card: Why Clients Trust Us (Animated from center under left card to right) */}
+                <motion.div 
+                  style={{ x: rightCardX }}
+                  className="bg-navy border border-steel/10 rounded-2xl p-8 lg:p-10 text-white flex flex-col gap-6 shadow-2xl relative z-10"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="bg-orange/10 p-3 rounded-xl text-orange">
+                      <Award className="w-6 h-6" />
+                    </div>
+                    <h3 className="font-heading text-xl font-bold text-white uppercase tracking-wider">
+                      Why Clients Trust Us
+                    </h3>
+                  </div>
+                  <div className="h-0.5 w-16 bg-orange/40" />
+                  
+                  <ul className="flex flex-col gap-4 font-sans text-sm text-steel/85">
+                    {trusts.map((trust, i) => (
+                      <li key={i} className="flex gap-3 items-start">
+                        <div className="flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="w-5 h-5 text-orange" />
+                        </div>
+                        <span className="font-medium text-white/95">{trust}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+
               </div>
 
             </div>

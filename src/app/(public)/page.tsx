@@ -155,18 +155,14 @@ const clients = [
 
 // Custom Counter Component for stats section count-up animation
 function Counter({ value, duration = 1500 }: { value: string; duration?: number }) {
-  const [count, setCount] = React.useState<number | string>(value);
+  // Check if value has a number at the start (e.g., "13+", "250+")
+  const numericMatch = React.useMemo(() => value.match(/^(\d+)(.*)$/), [value]);
+  const [count, setCount] = React.useState<number | string>(() => (numericMatch ? 0 + (numericMatch[2] || '') : value));
   const elementRef = React.useRef<HTMLSpanElement>(null);
   const [hasAnimated, setHasAnimated] = React.useState(false);
 
-  // Check if value has a number at the start (e.g., "13+", "250+")
-  const numericMatch = React.useMemo(() => value.match(/^(\d+)(.*)$/), [value]);
-
   React.useEffect(() => {
-    if (!numericMatch) {
-      setCount(value);
-      return;
-    }
+    if (!numericMatch) return;
 
     const target = parseInt(numericMatch[1], 10);
     const suffix = numericMatch[2] || '';
@@ -251,8 +247,8 @@ export default function HomePage() {
 
       <main className="flex-grow">
         
-        {/* HERO SECTION - 100% Full Viewport Screen Height (100vh) */}
-        <section className="relative bg-navy text-white min-h-screen h-screen flex items-center overflow-hidden pt-20 lg:pt-24 border-b border-steel/10">
+        {/* HERO SECTION - Responsive Height (min-h-screen on mobile, 100vh on desktop) */}
+        <section className="relative bg-navy text-white min-h-screen lg:h-screen flex items-center pt-24 sm:pt-28 lg:pt-20 pb-12 lg:pb-8 overflow-hidden border-b border-steel/10">
           
           {/* Background Video */}
           <video 
@@ -301,7 +297,7 @@ export default function HomePage() {
             </svg>
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10 w-full">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 lg:pt-10 pb-8 relative z-10 w-full">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               
               {/* Hero Content */}
@@ -453,7 +449,7 @@ export default function HomePage() {
               >
                 <div className="aspect-[4/3] rounded-lg shadow-xl overflow-hidden relative border border-steel/20 bg-navy group">
                   <motion.img 
-                    src="/about-homepage.png" 
+                    src="/about-us.png" 
                     alt="Who We Are - Krishna Instrumentation Works" 
                     className="w-full h-full object-cover"
                     whileHover={{ scale: 1.08 }}
@@ -538,7 +534,7 @@ export default function HomePage() {
             <div className="overflow-hidden py-6 -mx-2 px-2 relative">
               <div 
                 onTransitionEnd={handleTransitionEnd}
-                className={`flex gap-6 lg:[transform:translateX(calc(-1*(var(--track-idx)-1)*(100%+1.5rem)/3))] md:[transform:translateX(calc(-1*(var(--track-idx)-1)*(100%+1.5rem)/2))] [transform:translateX(calc(-1*(var(--track-idx)-1)*(100%+1.5rem)))] ${
+                className={`flex gap-6 lg:[transform:translateX(calc(-1*(var(--track-idx)-1)*(100%+1.5rem)/3))] md:[transform:translateX(calc(-1*(var(--track-idx)-1)*(100%+1.5rem)/2))] [transform:translateX(calc(-1*var(--track-idx)*(100%+1.5rem)))] ${
                   isTransitioning ? 'transition-transform duration-500 ease-out' : 'transition-none'
                 }`}
                 style={{ '--track-idx': trackIndex } as React.CSSProperties}
@@ -685,23 +681,39 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
-                  whileHover={{ y: -6 }}
-                  className="border border-steel/10 bg-graphite/20 rounded-lg p-6 hover:bg-graphite/40 transition-colors group"
+                  className="group relative h-80 rounded-xl overflow-hidden border border-steel/20 shadow-lg cursor-pointer bg-navy"
                 >
-                  {/* Logo Image */}
-                  <div className="bg-white border border-steel/20 shadow-sm p-2 rounded inline-block mb-4 transition-transform duration-300 group-hover:scale-105">
-                    <img 
-                      src={`/industries/${ind.slug}-logo.png`} 
-                      alt={`${ind.name} logo`} 
-                      className="w-10 h-10 object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
-                    />
+                  {/* Full Width Background Image */}
+                  <img 
+                    src={`/industries/${ind.slug}.png`} 
+                    alt={ind.name} 
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                  />
+
+                  {/* Dark Gradient Overlay for Contrast */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent transition-opacity duration-300 group-hover:from-navy/95 group-hover:via-navy/80" />
+
+                  {/* Content Container with Hover Animation */}
+                  <div className="absolute inset-0 p-6 flex flex-col justify-end text-white z-10">
+                    <div className="transition-transform duration-500 ease-out transform translate-y-8 group-hover:translate-y-0">
+                      {/* Title */}
+                      <h3 className="font-heading text-2xl font-bold text-white group-hover:text-orange transition-colors duration-300">
+                        {ind.name}
+                      </h3>
+
+                      {/* Description - Hidden initially, smooth opacity/slide reveal on hover */}
+                      <p className="font-sans text-sm text-steel/90 mt-2 leading-relaxed opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out">
+                        {ind.desc}
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="font-heading text-lg font-bold text-white group-hover:text-orange transition-colors">
-                    {ind.name}
-                  </h3>
-                  <p className="font-sans text-sm text-steel/80 mt-2 leading-relaxed">
-                    {ind.desc}
-                  </p>
+
+                  {/* Top Right Subtle Accent Badge */}
+                  <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="font-mono text-[10px] uppercase font-bold text-orange bg-navy/80 backdrop-blur-md px-2.5 py-1 rounded border border-orange/30">
+                      Sector
+                    </span>
+                  </div>
                 </motion.div>
               ))}
             </div>
