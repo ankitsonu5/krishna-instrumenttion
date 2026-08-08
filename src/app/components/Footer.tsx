@@ -23,19 +23,19 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 mb-12">
           
           {/* Brand and Description */}
-          <div className="lg:col-span-4 flex flex-col gap-5">
+          <div className="lg:col-span-4 flex flex-col gap-3">
             <div className="flex items-center gap-3">
               <img
                 src="/kiw-logo.png"
                 alt="KIW Logo"
                 className="h-10 w-auto object-contain"
-                style={{width: 100, height: 70}}
+                style={{width: 220, height: 120}}
               />
             </div>
 
-            <h3 className="font-heading text-xl font-bold text-white leading-tight mt-2">
+            {/* <h3 className="font-heading text-xl font-bold text-white leading-tight mt-2">
               Built for Accuracy.<br />Committed to Industry.
-            </h3>
+            </h3> */}
 
             <p className="text-sm text-steel/80 font-sans leading-relaxed">
               Krishna Instrumentation Works delivers premium instrumentation, electrical, automation, testing, commissioning, calibration, maintenance, and industrial project execution services across India.

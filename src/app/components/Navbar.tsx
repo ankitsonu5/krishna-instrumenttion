@@ -2,25 +2,27 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Download, ArrowRight } from 'lucide-react';
+import { Menu, X, Download, ArrowRight, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const menuItems = [
-  // { name: 'Home', href: '/' },
-  { name: 'About', href: '/about-us' },
-  { name: 'Services', href: '/services' },
-  { name: 'Industries', href: '/industries' },
-  { name: 'Projects', href: '/projects' },
-  { name: 'Clients', href: '/clients' },
+const companyDropdown = [
+  { name: 'About Us', href: '/about-us' },
   { name: 'Infrastructure', href: '/infrastructure' },
   { name: 'Quality & Safety', href: '/quality-safety' },
   { name: 'Careers', href: '/careers' },
-  { name: 'Contact', href: '/contact' },
+];
+
+const experienceDropdown = [
+  { name: 'Projects', href: '/projects' },
+  { name: 'Clients', href: '/clients' },
 ];
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [mobileCompanyOpen, setMobileCompanyOpen] = useState(false);
+  const [mobileExpOpen, setMobileExpOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,14 +33,11 @@ export default function Navbar() {
       }
     };
 
-    // Initial check in case page is refreshed while scrolled down
     handleScroll();
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Prevent scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -67,24 +66,112 @@ export default function Navbar() {
                 <img
                   src="/kiw-logo.png"
                   alt="KIW Logo"
-                  width={150}
-                  height={100}
-                  className="h-12 sm:h-16 w-auto object-contain transition-all duration-300"
+                  width={200}
+                  height={120}
+                  className="h-14 sm:h-20 lg:h-24 xl:h-24 w-auto object-contain transition-all duration-300"
                 />
               </Link>
             </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden xl:flex items-center gap-1">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="font-sans text-sm font-medium text-steel hover:text-white px-3 py-2 rounded-md transition-colors duration-200 whitespace-nowrap"
+              
+              {/* Company Dropdown */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setActiveDropdown('company')}
+                onMouseLeave={() => setActiveDropdown(null)}
+              >
+                <button 
+                  className="font-sans text-sm font-medium text-steel hover:text-white px-3 py-2 rounded-md transition-colors duration-200 whitespace-nowrap flex items-center gap-1.5 cursor-pointer"
                 >
-                  {item.name}
-                </Link>
-              ))}
+                  <span>Company</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'company' ? 'rotate-180 text-orange' : ''}`} />
+                </button>
+
+                <AnimatePresence>
+                  {activeDropdown === 'company' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full left-0 w-52 bg-navy/98 backdrop-blur-xl border border-steel/20 rounded-xl shadow-2xl py-2 z-50 overflow-hidden"
+                    >
+                      {companyDropdown.map((sub) => (
+                        <Link
+                          key={sub.name}
+                          href={sub.href}
+                          className="font-sans text-sm text-steel hover:text-white hover:bg-orange/15 px-4 py-2.5 block transition-colors border-l-2 border-transparent hover:border-orange"
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Services */}
+              <Link
+                href="/services"
+                className="font-sans text-sm font-medium text-steel hover:text-white px-3 py-2 rounded-md transition-colors duration-200 whitespace-nowrap"
+              >
+                Services
+              </Link>
+
+              {/* Industries */}
+              <Link
+                href="/industries"
+                className="font-sans text-sm font-medium text-steel hover:text-white px-3 py-2 rounded-md transition-colors duration-200 whitespace-nowrap"
+              >
+                Industries
+              </Link>
+
+              {/* Experience Dropdown */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setActiveDropdown('experience')}
+                onMouseLeave={() => setActiveDropdown(null)}
+              >
+                <button 
+                  className="font-sans text-sm font-medium text-steel hover:text-white px-3 py-2 rounded-md transition-colors duration-200 whitespace-nowrap flex items-center gap-1.5 cursor-pointer"
+                >
+                  <span>Experience</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'experience' ? 'rotate-180 text-orange' : ''}`} />
+                </button>
+
+                <AnimatePresence>
+                  {activeDropdown === 'experience' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full left-0 w-48 bg-navy/98 backdrop-blur-xl border border-steel/20 rounded-xl shadow-2xl py-2 z-50 overflow-hidden"
+                    >
+                      {experienceDropdown.map((sub) => (
+                        <Link
+                          key={sub.name}
+                          href={sub.href}
+                          className="font-sans text-sm text-steel hover:text-white hover:bg-orange/15 px-4 py-2.5 block transition-colors border-l-2 border-transparent hover:border-orange"
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Contact */}
+              <Link
+                href="/contact"
+                className="font-sans text-sm font-medium text-steel hover:text-white px-3 py-2 rounded-md transition-colors duration-200 whitespace-nowrap"
+              >
+                Contact
+              </Link>
+
             </nav>
 
             {/* Actions */}
@@ -128,62 +215,97 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-[100] bg-navy/98 backdrop-blur-xl flex flex-col justify-between pt-28 pb-10 px-6 overflow-y-auto"
           >
-            {/* Design Grid Line Accents */}
-            <div className="absolute inset-0 pointer-events-none opacity-5">
-              <div className="h-full w-px bg-white left-1/4 absolute" />
-              <div className="h-full w-px bg-white left-2/4 absolute" />
-              <div className="h-full w-px bg-white left-3/4 absolute" />
-              <div className="w-full h-px bg-white top-1/3 absolute" />
-              <div className="w-full h-px bg-white top-2/3 absolute" />
-            </div>
-
             {/* Mobile Menu Links */}
-            <nav className="flex flex-col gap-4 max-w-md mx-auto w-full relative z-10">
-              {menuItems.map((item, index) => (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
+            <nav className="flex flex-col gap-3 max-w-md mx-auto w-full relative z-10">
+              
+              {/* Mobile Company Accordion */}
+              <div className="border-b border-steel/10 pb-2">
+                <button
+                  onClick={() => setMobileCompanyOpen(!mobileCompanyOpen)}
+                  className="font-heading text-xl font-bold text-steel hover:text-white w-full py-2 flex items-center justify-between"
                 >
-                  <Link
-                    href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="font-heading text-2xl font-bold text-steel hover:text-white block py-2 transition-colors border-b border-steel/10"
-                  >
-                    <span className="text-xs font-mono text-orange mr-3">0{index + 1}.</span>
-                    {item.name}
-                  </Link>
-                </motion.div>
-              ))}
+                  <span>Company</span>
+                  <ChevronDown className={`w-5 h-5 transition-transform ${mobileCompanyOpen ? 'rotate-180 text-orange' : ''}`} />
+                </button>
+                {mobileCompanyOpen && (
+                  <div className="pl-4 flex flex-col gap-2.5 mt-1 border-l border-orange/40 ml-2 py-1">
+                    {companyDropdown.map((sub) => (
+                      <Link
+                        key={sub.name}
+                        href={sub.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="font-sans text-base text-steel hover:text-white py-1 block"
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Services */}
+              <Link
+                href="/services"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="font-heading text-xl font-bold text-steel hover:text-white py-2 transition-colors border-b border-steel/10"
+              >
+                Services
+              </Link>
+
+              {/* Industries */}
+              <Link
+                href="/industries"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="font-heading text-xl font-bold text-steel hover:text-white py-2 transition-colors border-b border-steel/10"
+              >
+                Industries
+              </Link>
+
+              {/* Mobile Experience Accordion */}
+              <div className="border-b border-steel/10 pb-2">
+                <button
+                  onClick={() => setMobileExpOpen(!mobileExpOpen)}
+                  className="font-heading text-xl font-bold text-steel hover:text-white w-full py-2 flex items-center justify-between"
+                >
+                  <span>Experience</span>
+                  <ChevronDown className={`w-5 h-5 transition-transform ${mobileExpOpen ? 'rotate-180 text-orange' : ''}`} />
+                </button>
+                {mobileExpOpen && (
+                  <div className="pl-4 flex flex-col gap-2.5 mt-1 border-l border-orange/40 ml-2 py-1">
+                    {experienceDropdown.map((sub) => (
+                      <Link
+                        key={sub.name}
+                        href={sub.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="font-sans text-base text-steel hover:text-white py-1 block"
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Contact */}
+              <Link
+                href="/contact"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="font-heading text-xl font-bold text-steel hover:text-white py-2 transition-colors border-b border-steel/10"
+              >
+                Contact
+              </Link>
+
             </nav>
 
-            {/* Mobile CTA and Footer info */}
-            <div className="max-w-md mx-auto w-full flex flex-col gap-6 mt-8 relative z-10">
-              <div className="flex flex-col gap-4">
-                <a
-                  href="/documents/company-profile.pdf"
-                  download
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="font-sans text-sm font-medium text-steel hover:text-white flex items-center justify-center gap-2 py-3 border border-steel/20 rounded hover:bg-white/5 transition-colors"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>Download Company Profile</span>
-                </a>
-                <Link
-                  href="/contact?rfq=true"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="font-sans text-sm font-semibold bg-orange text-white text-center py-4 rounded hover:bg-orange/90 transition-colors shadow-lg shadow-orange/20"
-                >
-                  Request a Quote
-                </Link>
-              </div>
-
-              <div className="text-center">
-                <p className="text-[10px] font-mono text-steel/40 uppercase tracking-widest">
-                  Krishna Instrumentation Works
-                </p>
-              </div>
+            {/* Mobile CTA */}
+            <div className="max-w-md mx-auto w-full flex flex-col gap-4 mt-8 relative z-10">
+              <Link
+                href="/contact?rfq=true"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="font-sans text-sm font-semibold bg-orange text-white text-center py-3.5 rounded hover:bg-orange/90 transition-colors shadow-lg shadow-orange/20"
+              >
+                Request a Quote
+              </Link>
             </div>
           </motion.div>
         )}
