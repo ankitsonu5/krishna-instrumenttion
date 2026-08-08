@@ -26,11 +26,11 @@ body {
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1366px) {
   .max-w-7xl,
   div[class*="max-w-7xl"] {
-    max-width: 1366px !important;
-    width: 1366px !important;
+    max-width: 1280px !important;
+    width: 1280px !important;
   }
 }
 
