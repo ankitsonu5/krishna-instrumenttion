@@ -129,10 +129,6 @@ function ContactFormContent() {
     if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) return setError('Please enter a valid official email address.');
     if (!formData.phone.match(/^\+?[0-9\s\-]{8,15}$/)) return setError('Please enter a valid phone number.');
     if (!formData.consent) return setError('You must consent to the storage policies to submit an RFQ.');
-    if (parseInt(formData.captchaAnswer) !== captcha.result) {
-      generateCaptcha();
-      return setError('Security Verification answer is incorrect. Please try again.');
-    }
 
     setIsSubmitting(true);
     setSubmitStatus('idle');
@@ -353,7 +349,7 @@ function ContactFormContent() {
             </div>
 
             {/* Scope / Industry Details */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="flex flex-col gap-1">
                 <label htmlFor="industry" className="font-sans text-xs font-bold text-navy uppercase tracking-wider">
                   Industry Sector
@@ -395,60 +391,6 @@ function ContactFormContent() {
                   <option value="Annual Maintenance / Shutdowns">Annual Maintenance & Shutdowns</option>
                   <option value="Manpower Supply (Deputation)">Technical Manpower Supply</option>
                 </select>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label htmlFor="projectStatus" className="font-sans text-xs font-bold text-navy uppercase tracking-wider">
-                  Project Status
-                </label>
-                <select
-                  id="projectStatus"
-                  name="projectStatus"
-                  value={formData.projectStatus}
-                  onChange={handleInputChange}
-                  className="w-full bg-offwhite border border-steel/30 rounded px-3 py-2 text-xs font-sans focus:outline-none focus:border-navy transition-all"
-                >
-                  <option value="">Select status</option>
-                  <option value="Planning / Concept Stage">Planning / Concept</option>
-                  <option value="Budgeting / Approved Funds">Budgeting & Estimates</option>
-                  <option value="Active RFQ / Tendering">Active RFQ / Tendering</option>
-                  <option value="Immediate Execution Needed">Immediate Execution</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Expected Start Date */}
-              <div className="flex flex-col gap-1">
-                <label htmlFor="startDate" className="font-sans text-xs font-bold text-navy uppercase tracking-wider">
-                  Expected Mobilization Date
-                </label>
-                <input
-                  type="date"
-                  id="startDate"
-                  name="startDate"
-                  value={formData.startDate}
-                  onChange={handleInputChange}
-                  className="w-full bg-offwhite border border-steel/30 rounded px-3 py-2 text-sm font-sans focus:outline-none focus:border-navy transition-all"
-                />
-              </div>
-
-              {/* Security Question */}
-              <div className="flex flex-col gap-1">
-                <label htmlFor="captchaAnswer" className="font-sans text-xs font-bold text-navy uppercase tracking-wider flex items-center justify-between">
-                  <span>Security Verification *</span>
-                  <span className="font-mono text-orange font-extrabold text-sm">{captcha.num1} + {captcha.num2} = ?</span>
-                </label>
-                <input
-                  type="number"
-                  id="captchaAnswer"
-                  name="captchaAnswer"
-                  required
-                  value={formData.captchaAnswer}
-                  onChange={handleInputChange}
-                  className="w-full bg-offwhite border border-steel/30 rounded px-3 py-2 text-sm font-sans focus:outline-none focus:border-navy transition-all"
-                  placeholder="Solve the sum"
-                />
               </div>
             </div>
 

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -23,12 +24,27 @@ import {
 
 import { projectsData } from './data';
 
-export default function ProjectsPage() {
+function ProjectsContent() {
+  const searchParams = useSearchParams();
+  const statusParam = searchParams.get('status');
+
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('All');
+  const [selectedStatus, setSelectedStatus] = useState(statusParam || 'All');
   const [selectedIndustry, setSelectedIndustry] = useState('All');
   const [selectedService, setSelectedService] = useState('All');
-  const [layoutMode, setLayoutMode] = useState<'grid' | 'ledger'>('ledger'); // Ledger view by default for a technical distinct look
+  // Completed projects default to 'ledger' (Table format). Ongoing projects default to 'grid' (Cards format).
+  const [layoutMode, setLayoutMode] = useState<'grid' | 'ledger'>(statusParam === 'Completed' ? 'ledger' : 'grid');
+
+  useEffect(() => {
+    if (statusParam) {
+      setSelectedStatus(statusParam);
+      if (statusParam === 'Completed') {
+        setLayoutMode('ledger');
+      } else if (statusParam === 'Ongoing') {
+        setLayoutMode('grid');
+      }
+    }
+  }, [statusParam]);
 
   // Extract unique filters
   const industries = useMemo(() => {
@@ -285,47 +301,80 @@ export default function ProjectsPage() {
                   {filteredProjects.map((proj, idx) => (
                     <div 
                       key={idx} 
-                      className="bg-white border border-steel/20 rounded-lg p-6 hover:shadow-md hover:border-steel/40 transition-all flex flex-col justify-between"
+                      className="bg-white border border-steel/20 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-steel/40 transition-all flex flex-col justify-between group"
                     >
                       <div>
-                        {/* Card Header Status */}
-                        <div className="flex justify-between items-start mb-4">
-                          <span className={`inline-flex items-center gap-1 font-mono text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                            proj.status === 'Completed' 
-                              ? 'bg-safety-green/10 text-safety-green' 
-                              : 'bg-orange/10 text-orange'
-                          }`}>
-                            {proj.status}
-                          </span>
-                          <span className="font-mono text-[10px] text-black-800/80">{proj.period}</span>
+                        {/* Interactive Real Google Map Header at top of Card */}
+                        <div className="h-44 w-full relative bg-steel/20 border-b border-steel/15 overflow-hidden">
+                          <iframe
+                            title={`Map for ${proj.location}`}
+                            width="100%"
+                            height="100%"
+                            style={{ border: 0, filter: 'contrast(1.05) saturate(1.1)' }}
+                            loading="lazy"
+                            allowFullScreen={false}
+                            referrerPolicy="no-referrer-when-downgrade"
+                            src={`https://maps.google.com/maps?q=${encodeURIComponent(proj.location + ', India')}&t=&z=9&ie=UTF8&iwloc=&output=embed`}
+                            className="w-full h-full"
+                          />
+                          
+                          {/* Map Overlay Badge */}
+                          <div className="absolute top-3 left-3 right-3 flex justify-between items-center pointer-events-none z-10">
+                            <span className="flex items-center gap-1.5 font-mono text-[10px] font-bold text-navy bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-md shadow-md border border-steel/20">
+                              <MapPin className="w-3.5 h-3.5 text-orange flex-shrink-0" />
+                              <span>{proj.location}</span>
+                            </span>
+                            <span className={`inline-flex items-center gap-1 font-mono text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md ${
+                              proj.status === 'Completed' 
+                                ? 'bg-safety-green text-white' 
+                                : 'bg-orange text-white'
+                            }`}>
+                              {proj.status}
+                            </span>
+                          </div>
                         </div>
 
-                        {/* Title */}
-                        <h3 className="font-heading text-base font-bold text-navy mb-1 leading-snug">
-                          {proj.title}
-                        </h3>
-                        <p className="font-sans text-xs text-black-800/80 font-medium mb-3">{proj.client}</p>
+                        {/* Card Body Content */}
+                        <div className="p-6">
+                          <div className="flex justify-between items-center mb-3 font-mono text-[10px] text-graphite/60 border-b border-steel/10 pb-2">
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3 text-orange" />
+                              <span>Period: {proj.period}</span>
+                            </span>
+                            <span className="flex items-center gap-1 font-bold text-navy">
+                              <Briefcase className="w-3 h-3 text-navy" />
+                              <span>{proj.industry}</span>
+                            </span>
+                          </div>
 
-                        {/* Scope preview */}
-                        <p className="font-sans text-xs text-graphite/80 leading-relaxed mb-4 line-clamp-2">
-                          {proj.scope}
-                        </p>
+                          {/* Title */}
+                          <h3 className="font-heading text-base font-bold text-navy mb-1 leading-snug group-hover:text-orange transition-colors">
+                            {proj.title}
+                          </h3>
+                          <p className="font-sans text-xs text-navy/80 font-bold mb-3">{proj.client}</p>
 
-                        {/* Meta */}
-                        <div className="border-t border-steel/10 pt-3 flex flex-wrap gap-x-4 gap-y-2 text-[10px] font-mono text-black-800">
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-3 h-3 text-orange" />
-                            {proj.location}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Briefcase className="w-3 h-3 text-navy" />
-                            {proj.industry}
-                          </span>
+                          {/* Full Address / Location Info */}
+                          <div className="bg-offwhite border border-steel/15 p-2.5 rounded-md mb-3 flex items-start gap-2 text-xs font-sans text-graphite/90">
+                            <MapPin className="w-4 h-4 text-orange flex-shrink-0 mt-0.5" />
+                            <div>
+                              <span className="font-mono text-[9px] text-navy/60 font-bold uppercase block tracking-wider">PROJECT SITE LOCATION</span>
+                              <span className="font-medium text-navy">{proj.location}</span>
+                            </div>
+                          </div>
+
+                          {/* Scope preview */}
+                          <p className="font-sans text-xs text-graphite/80 leading-relaxed line-clamp-3">
+                            {proj.scope}
+                          </p>
                         </div>
                       </div>
 
                       {/* Detail CTA */}
-                      <div className="mt-6 pt-4 border-t border-steel/10 flex justify-end">
+                      <div className="px-6 pb-6 pt-2 flex justify-between items-center border-t border-steel/10 mt-2">
+                        <span className="font-mono text-[10px] text-safety-green font-bold uppercase flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-safety-green animate-pulse" />
+                          Verified Site
+                        </span>
                         <Link 
                           href={`/projects/${proj.slug}`}
                           className="font-mono text-xs font-bold text-orange hover:text-navy uppercase tracking-wider flex items-center gap-1 transition-colors"
@@ -347,5 +396,13 @@ export default function ProjectsPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function ProjectsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-navy text-white flex items-center justify-center font-mono">Loading Projects...</div>}>
+      <ProjectsContent />
+    </Suspense>
   );
 }

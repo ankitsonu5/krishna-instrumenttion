@@ -15,63 +15,72 @@ const clientPartners = [
     role: 'Site Owner & Direct Client',
     desc: 'KIW has executed multiple instrumentation setups, cabling, and loop checks directly for refinery units and pipeline networks under direct service contracts.',
     status: 'Verified Scope',
-    logo: '/indianoil-logo.png'
+    logo: '/indianoil-logo.png',
+    image: '/about-us/1.jpeg'
   },
   {
     name: 'NTPC Limited',
     role: 'Site Owner & Project Stakeholder',
     desc: 'Delivered boiler, turbine, and C&I loop checking services at super thermal power stations, coordinating with main automation contractors and local operators.',
     status: 'Verified Scope',
-    logo: '/ntpc-logo.png'
+    logo: '/ntpc-logo.png',
+    image: '/about-us/4.jpeg'
   },
   {
     name: 'PCBL (Phillips Carbon Black Ltd.)',
     role: 'Site Owner & Direct Client',
     desc: 'Executed end-to-end field cabling, junction box installations, and instrumentation loop testing under direct industrial execution orders.',
     status: 'Verified Scope',
-    logo: '/pcbl-logo.png'
+    logo: '/pcbl-logo.png',
+    image: '/about-us/3.jpeg'
   },
   {
     name: 'Balrampur Chini Mills Limited',
     role: 'Site Owner & Direct Client',
     desc: 'Performed off-season boiler maintenance calibration loops and field testing to ensure stable steam outputs during crushing runs.',
     status: 'Verified Scope',
-    logo: '/balarampur-chini-mills-logo.png'
+    logo: '/balarampur-chini-mills-logo.png',
+    image: '/about-us/5.jpeg'
   },
   {
     name: 'Yokogawa India Ltd.',
     role: 'Technology Provider & Principal Contractor',
     desc: 'Collaborated on DCS loop checking, marshalling panel terminal checks, and control logic checks as a subcontractor executing local works.',
     status: 'Verified Scope',
-    logo: '/yokogawa-logo.png'
+    logo: '/yokogawa-logo.png',
+    image: '/about-us/7.jpeg'
   },
   {
     name: 'Emerson Process Management',
     role: 'Technology Provider & Principal Contractor',
     desc: 'Assisted in validating Ovation DCS signal loops and calibrating smart HART control valve positioners on critical boiler steam paths.',
     status: 'Verified Scope',
-    logo: '/emerson-logo.png'
+    logo: '/emerson-logo.png',
+    image: '/about-us/8.jpeg'
   },
   {
     name: 'ABB',
     role: 'Technology Provider & Principal Contractor',
     desc: 'Supported substation control installations, telemetry configurations, and signal tests for local electrical systems.',
     status: 'Verified Scope',
-    logo: '/abb-logo.png'
+    logo: '/abb-logo.png',
+    image: '/about-us/9.jpeg'
   },
   {
     name: 'Siemens Energy',
     role: 'Technology Provider & Principal Contractor',
     desc: 'Executed cable tray setups, sensor mountings, and panel terminations under Siemens commissioning teams at turbine halls.',
     status: 'Verified Scope',
-    logo: '/siemens-logo.png'
+    logo: '/siemens-logo.png',
+    image: '/about-us/2.jpeg'
   },
   {
     name: 'Honeywell',
     role: 'Technology Provider & Principal Contractor',
     desc: 'Assisted in field routing verification, signal integrity checking, and loop verification for Honeywell automation installations.',
     status: 'Verified Scope',
-    logo: '/honeywell-logo.png'
+    logo: '/honeywell-logo.png',
+    image: '/about-us/6.jpeg'
   }
 ];
 
@@ -144,10 +153,27 @@ export default function ClientsPage() {
               {clientPartners.map((item, idx) => (
                 <div 
                   key={idx} 
-                  className="bg-white border border-steel/20 rounded-lg p-6 hover:shadow-md hover:border-steel/40 transition-all flex flex-col justify-between relative overflow-hidden group"
+                  className="bg-white border border-steel/20 rounded-lg overflow-hidden hover:shadow-md hover:border-steel/40 transition-all flex flex-col justify-between relative group"
                 >
+                  {/* Card Top Site Image */}
+                  {item.image && (
+                    <div className="h-44 w-full relative overflow-hidden bg-navy/10 border-b border-steel/15">
+                      <img 
+                        src={item.image} 
+                        alt={item.name} 
+                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent" />
+                      <div className="absolute top-3 left-3 z-10">
+                        <span className="font-mono text-[9px] font-bold uppercase tracking-wider bg-navy/80 backdrop-blur-md text-orange px-2.5 py-1 rounded border border-white/10">
+                          {item.role}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Background logo on hover */}
-                  <div className="absolute right-2 bottom-8 w-32 h-32 opacity-0 group-hover:opacity-[0.18] pointer-events-none transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 flex items-center justify-center z-0">
+                  <div className="absolute right-2 bottom-8 w-28 h-28 opacity-0 group-hover:opacity-[0.18] pointer-events-none transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 flex items-center justify-center z-0">
                     <img 
                       src={item.logo} 
                       alt="" 
@@ -155,32 +181,26 @@ export default function ClientsPage() {
                     />
                   </div>
 
-                  <div className="relative z-10">
-                    {/* Header */}
-                    <div className="flex justify-between items-start mb-4">
-                      <span className="font-mono text-[9px] font-bold uppercase tracking-wider bg-orange/5 text-orange px-2.5 py-1 rounded">
-                        {item.role}
-                      </span>
-                      <Workflow className="w-4 h-4 text-steel/40" />
+                  <div className="p-6 flex-grow flex flex-col justify-between relative z-10">
+                    <div>
+                      {/* Title */}
+                      <h3 className="font-heading text-base font-bold text-navy mb-2">
+                        {item.name}
+                      </h3>
+                      
+                      <p className="font-sans text-xs text-graphite/80 leading-relaxed">
+                        {item.desc}
+                      </p>
                     </div>
 
-                    {/* Title */}
-                    <h3 className="font-heading text-base font-bold text-navy mb-3">
-                      {item.name}
-                    </h3>
-                    
-                    <p className="font-sans text-xs text-graphite/80 leading-relaxed">
-                      {item.desc}
-                    </p>
-                  </div>
-
-                  {/* Stamp */}
-                  <div className="mt-6 pt-4 border-t border-steel/10 flex justify-between items-center text-[10px] font-mono text-black">
-                    <span className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-safety-green" />
-                      HSE Compliant
-                    </span>
-                    <span className="font-semibold text-navy">{item.status}</span>
+                    {/* Stamp */}
+                    <div className="mt-6 pt-4 border-t border-steel/10 flex justify-between items-center text-[10px] font-mono text-black">
+                      <span className="flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-safety-green" />
+                        HSE Compliant
+                      </span>
+                      <span className="font-semibold text-navy">{item.status}</span>
+                    </div>
                   </div>
                 </div>
               ))}

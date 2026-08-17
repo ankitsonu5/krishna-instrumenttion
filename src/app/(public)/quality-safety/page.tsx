@@ -19,7 +19,8 @@ import {
   BookOpen,
   Briefcase,
   Layers,
-  Heart
+  Heart,
+  Sparkles
 } from 'lucide-react';
 
 const corePillars = [
@@ -62,6 +63,14 @@ const corePillars = [
     image: '/quality/continuous-improvement.png',
     badge: 'OPTIMIZATION',
     colorClass: 'border-navy/25 bg-navy/5 text-navy'
+  },
+  {
+    title: 'Cleanlness',
+    desc: 'Maintaining 5S workplace organization, orderly cable tray routes, clean bench testing areas, and spotless site housekeeping.',
+    icon: Sparkles,
+    image: '/quality/cleanliness.png',
+    badge: '5S HOUSEKEEPING',
+    colorClass: 'border-safety-green/30 bg-safety-green/5 text-safety-green'
   }
 ];
 
@@ -174,99 +183,6 @@ export default function QualitySafetyPage() {
                 );
               })}
             </div>
-          </div>
-        </section>
-
-        {/* COMPLIANCE DOCUMENTS LIBRARY */}
-        <section className="py-20 bg-white border-t border-b border-steel/15">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-              
-              {/* Left Column: List of files */}
-              <div className="lg:col-span-8 flex flex-col gap-6">
-                <div className="flex flex-col gap-3">
-                  <span className="font-mono text-xs text-orange font-semibold uppercase tracking-widest">
-                    REGISTRATION LOGS
-                  </span>
-                  <h3 className="font-heading text-xl sm:text-2xl font-bold text-navy">
-                    Compliance & Statutory Policy Library
-                  </h3>
-                  <p className="font-sans text-xs sm:text-sm text-graphite/75 leading-relaxed">
-                    Access and review the official policy documents, ISO certifications, and standard quality procedures registers deployed at our project sites.
-                  </p>
-                </div>
-
-                {/* Ledger list of files */}
-                <div className="border border-steel/20 rounded-lg overflow-hidden shadow-sm mt-4">
-                  <div className="bg-navy px-6 py-4 border-b border-steel/10 flex justify-between items-center text-white font-mono text-[10px] uppercase tracking-wider">
-                    <span>Document Title / Registry</span>
-                    <span>Action</span>
-                  </div>
-                  
-                  <div className="divide-y divide-steel/10 bg-white">
-                    {documents.map((doc, idx) => (
-                      <div key={idx} className="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-offwhite/40 transition-colors">
-                        <div>
-                          <div className="font-heading text-sm font-bold text-navy">{doc.name}</div>
-                          <p className="font-sans text-xs text-graphite/70 mt-1">{doc.desc}</p>
-                        </div>
-                        <a 
-                          href={`/documents/compliance/${doc.file}`}
-                          download
-                          className="font-mono text-[10px] font-bold text-orange hover:text-navy uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap self-start sm:self-center"
-                        >
-                          <Download className="w-3.5 h-3.5" />
-                          <span>Download</span>
-                        </a>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: HSE Incident Board */}
-              <div className="lg:col-span-4 flex flex-col gap-6">
-                <div className="bg-navy text-white rounded-lg p-6 border border-steel/10 relative overflow-hidden flex flex-col gap-6">
-                  <div className="absolute top-0 right-0 p-2 font-mono text-[8px] text-steel/20">LOG: 2026-HSE</div>
-                  
-                  <div className="text-safety-green">
-                    <ShieldCheck className="w-10 h-10" />
-                  </div>
-
-                  <div>
-                    <h4 className="font-heading text-base font-bold">Safety Performance Record</h4>
-                    <p className="font-sans text-xs text-steel/70 leading-relaxed mt-1">
-                      KIW maintains rigorous logs of safe work hours and is committed to maintaining a strict zero-accident index.
-                    </p>
-                  </div>
-
-                  <div className="border-t border-steel/15 pt-4 space-y-3 font-mono text-xs">
-                    <div className="flex justify-between border-b border-steel/5 pb-1">
-                      <span className="text-steel/60">LTI INCIDENTS</span>
-                      <span className="text-safety-green font-bold">0.00 (ZERO)</span>
-                    </div>
-                    <div className="flex justify-between border-b border-steel/5 pb-1">
-                      <span className="text-steel/60">SAFE MAN HOURS</span>
-                      <span className="text-white font-bold">3.2M+ LOGGED</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-steel/60">AUDIT CLEARANCE</span>
-                      <span className="text-safety-green font-bold">100% CLEAR</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-offwhite border border-steel/30 rounded-lg p-6 flex gap-3 items-start">
-                  <AlertTriangle className="w-5 h-5 text-orange flex-shrink-0 mt-0.5" />
-                  <p className="font-sans text-xs text-graphite/70 leading-relaxed">
-                    <strong>Auditing Warning:</strong> Every statutory and insurance package is verified against site-specific workforce details prior to mobilizations.
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
           </div>
         </section>
 

@@ -1,8 +1,6 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Download, ArrowRight, ChevronDown } from 'lucide-react';
+import { Menu, X, Download, ArrowRight, ChevronDown, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const companyDropdown = [
@@ -12,15 +10,11 @@ const companyDropdown = [
   { name: 'Careers', href: '/careers' },
 ];
 
-const experienceDropdown = [
-  { name: 'Projects', href: '/projects' },
-  { name: 'Clients', href: '/clients' },
-];
-
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [isProjectsHovered, setIsProjectsHovered] = useState(false);
   const [mobileCompanyOpen, setMobileCompanyOpen] = useState(false);
   const [mobileExpOpen, setMobileExpOpen] = useState(false);
 
@@ -148,21 +142,67 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute top-full left-0 w-48 bg-navy/98 backdrop-blur-xl border border-steel/20 rounded-xl shadow-2xl py-2 z-50 overflow-hidden"
+                      className="absolute top-full left-0 w-56 bg-navy/98 backdrop-blur-xl border border-steel/20 rounded-xl shadow-2xl py-2 z-50 overflow-visible"
                     >
-                      {experienceDropdown.map((sub) => (
+                      {/* Projects Overview with Side Arrow */}
+                      <div 
+                        className="relative"
+                        onMouseEnter={() => setIsProjectsHovered(true)}
+                        onMouseLeave={() => setIsProjectsHovered(false)}
+                      >
+                        <div className="font-sans text-xs font-bold text-orange uppercase tracking-wider px-4 py-2.5 flex items-center justify-between border-b border-steel/10 hover:bg-orange/10 cursor-pointer group">
+                          <span>Projects Overview</span>
+                          <ChevronRight className={`w-3.5 h-3.5 transition-transform duration-200 ${isProjectsHovered ? 'translate-x-0.5 text-white' : 'text-orange'}`} />
+                        </div>
+
+                        {/* Side Flyout Submenu */}
+                        <AnimatePresence>
+                          {isProjectsHovered && (
+                            <motion.div
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -10 }}
+                              transition={{ duration: 0.15 }}
+                              className="absolute top-0 left-full ml-1 w-52 bg-navy/98 backdrop-blur-xl border border-steel/20 rounded-xl shadow-2xl py-2 z-50 overflow-hidden"
+                            >
+                              <Link
+                                href="/projects?status=Completed"
+                                className="font-sans text-sm text-steel hover:text-white hover:bg-orange/15 px-4 py-2.5 block transition-colors border-l-2 border-transparent hover:border-orange"
+                              >
+                                Completed Projects
+                              </Link>
+                              <Link
+                                href="/projects?status=Ongoing"
+                                className="font-sans text-sm text-steel hover:text-white hover:bg-orange/15 px-4 py-2.5 block transition-colors border-l-2 border-transparent hover:border-orange"
+                              >
+                                Ongoing Projects
+                              </Link>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+
+                      {/* Clients Link */}
+                      <div className="mt-1 pt-1 border-t border-steel/10">
                         <Link
-                          key={sub.name}
-                          href={sub.href}
-                          className="font-sans text-sm text-steel hover:text-white hover:bg-orange/15 px-4 py-2.5 block transition-colors border-l-2 border-transparent hover:border-orange"
+                          href="/clients"
+                          className="font-sans text-sm text-steel hover:text-white hover:bg-orange/15 px-4 py-2.5 block transition-colors border-l-2 border-transparent hover:border-orange font-semibold"
                         >
-                          {sub.name}
+                          Clients
                         </Link>
-                      ))}
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
+
+              {/* Gallery */}
+              <Link
+                href="/gallery"
+                className="font-sans text-sm font-medium text-steel hover:text-white px-3 py-2 rounded-md transition-colors duration-200 whitespace-nowrap"
+              >
+                Gallery
+              </Link>
 
               {/* Contact */}
               <Link
@@ -272,19 +312,39 @@ export default function Navbar() {
                 </button>
                 {mobileExpOpen && (
                   <div className="pl-4 flex flex-col gap-2.5 mt-1 border-l border-orange/40 ml-2 py-1">
-                    {experienceDropdown.map((sub) => (
-                      <Link
-                        key={sub.name}
-                        href={sub.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="font-sans text-base text-steel hover:text-white py-1 block"
-                      >
-                        {sub.name}
-                      </Link>
-                    ))}
+                    <Link
+                      href="/projects?status=Completed"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="font-sans text-base text-steel hover:text-white py-1 block font-semibold text-orange"
+                    >
+                      • Completed Projects
+                    </Link>
+                    <Link
+                      href="/projects?status=Ongoing"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="font-sans text-base text-steel hover:text-white py-1 block font-semibold text-orange"
+                    >
+                      • Ongoing Projects
+                    </Link>
+                    <Link
+                      href="/clients"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="font-sans text-base text-steel hover:text-white py-1 block border-t border-steel/10 pt-2"
+                    >
+                      Clients
+                    </Link>
                   </div>
                 )}
               </div>
+
+              {/* Gallery */}
+              <Link
+                href="/gallery"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="font-heading text-xl font-bold text-steel hover:text-white py-2 transition-colors border-b border-steel/10"
+              >
+                Gallery
+              </Link>
 
               {/* Contact */}
               <Link

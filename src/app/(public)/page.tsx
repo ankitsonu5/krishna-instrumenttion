@@ -19,7 +19,8 @@ import {
   FileCheck,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  ArrowRight
 } from 'lucide-react';
 
 const stats = [
@@ -102,42 +103,48 @@ const projects = [
     location: 'Panipat, India',
     scope: 'Refinery expansion C&I installation, field instrument mounting, junction box cabling, and automation testing.',
     year: '2024',
-    logo: '/indianoil-logo.png'
+    logo: '/indianoil-logo.png',
+    image: '/about-us/1.jpeg'
   },
   {
     client: 'Chevron Bangladesh',
     location: 'Bibiyana Gas Field',
     scope: 'Gas plant commissioning support, calibration of safety valves, transmitter verification, and loop checks.',
     year: '2023',
-    logo: '/chevron-logo.png'
+    logo: '/chevron-logo.png',
+    image: '/about-us/2.jpeg'
   },
   {
     client: 'RIL Malaysia',
     location: 'Melaka Petrochemical Complex',
     scope: 'Petrochemical control system installation, DCS integration assistance, and loop checks.',
     year: '2023',
-    logo: '/ril-logo.png'
+    logo: '/ril-logo.png',
+    image: '/about-us/3.jpeg'
   },
   {
     client: 'NTPC Singrauli',
     location: 'Singrauli, India',
     scope: 'Super Thermal Power Station unit modernization, C&I cabling, and boiler instrumentation calibration.',
     year: '2022',
-    logo: '/ntpc-logo.png'
+    logo: '/ntpc-logo.png',
+    image: '/about-us/4.jpeg'
   },
   {
     client: 'NTPC Sipat',
     location: 'Sipat, India',
     scope: 'DCS / SCADA upgrade, system loop checking, and integration of smart transmitters.',
     year: '2022',
-    logo: '/ntpc-logo.png'
+    logo: '/ntpc-logo.png',
+    image: '/about-us/5.jpeg'
   },
   {
     client: 'Jindal Steel & Power Ltd. (JSPL)',
     location: 'Raigarh, India',
     scope: 'Blast furnace automation, instrumentation cabling, calibration, and loop checking.',
     year: '2021',
-    logo: '/jspl-logo.png'
+    logo: '/jspl-logo.png',
+    image: '/about-us/7.jpeg'
   }
 ];
 
@@ -220,26 +227,26 @@ export default function HomePage() {
   const [isTransitioning, setIsTransitioning] = React.useState(true);
 
   const nextService = () => {
-    setIsTransitioning(true);
+    if (!isTransitioning) setIsTransitioning(true);
     setTrackIndex((prev) => prev + 1);
   };
 
   const prevService = () => {
-    setIsTransitioning(true);
+    if (!isTransitioning) setIsTransitioning(true);
     setTrackIndex((prev) => prev - 1);
   };
 
   const handleTransitionEnd = () => {
-    if (trackIndex >= 10) {
+    if (trackIndex >= services.length + 1) {
       setIsTransitioning(false);
       setTrackIndex(1);
     } else if (trackIndex <= 0) {
       setIsTransitioning(false);
-      setTrackIndex(9);
+      setTrackIndex(services.length);
     }
   };
 
-  const activeServiceIdx = (trackIndex - 1 + services.length) % services.length;
+  const activeServiceIdx = ((trackIndex - 1) % services.length + services.length) % services.length;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -540,11 +547,13 @@ export default function HomePage() {
                 style={{ '--track-idx': trackIndex } as React.CSSProperties}
               >
                 {(() => {
+                  // Buffer clones at start and end for smooth endless scrolling
                   const extendedServices = [
-                    { ...services[services.length - 1], realIndex: services.length - 1 },
-                    ...services.map((s, idx) => ({ ...s, realIndex: idx })),
-                    { ...services[0], realIndex: 0 },
-                    { ...services[1], realIndex: 1 }
+                    { ...services[services.length - 1], realIndex: services.length - 1 }, // extIndex = 0
+                    ...services.map((s, idx) => ({ ...s, realIndex: idx })),              // extIndex = 1 to 9
+                    { ...services[0], realIndex: 0 },                                     // extIndex = 10
+                    { ...services[1], realIndex: 1 },                                     // extIndex = 11
+                    { ...services[2], realIndex: 2 }                                      // extIndex = 12
                   ];
 
                   return extendedServices.map((svc, extIdx) => {
@@ -717,6 +726,17 @@ export default function HomePage() {
                 </motion.div>
               ))}
             </div>
+
+            {/* View All Industries Button */}
+            <div className="mt-14 text-center flex justify-center">
+              <Link
+                href="/industries"
+                className="font-sans text-sm font-semibold bg-orange text-white px-8 py-3.5 rounded hover:bg-orange/90 transition-all duration-300 shadow-lg shadow-orange/20 flex items-center gap-2.5 group border border-orange/20"
+              >
+                <span>View All Industries</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+              </Link>
+            </div>
           </div>
         </section>
 
@@ -820,32 +840,48 @@ export default function HomePage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
                   whileHover={{ y: -6 }}
-                  className="bg-offwhite border border-steel/20 rounded-lg p-6 hover:shadow-md hover:border-steel/40 transition-all flex flex-col justify-between relative overflow-hidden group z-0"
+                  className="bg-offwhite border border-steel/20 rounded-lg overflow-hidden hover:shadow-md hover:border-steel/40 transition-all flex flex-col justify-between relative group z-0"
                 >
-                  <div className="relative z-10">
-                    <div className="flex justify-between items-start mb-4">
-                      <span className="font-mono text-xs text-orange uppercase tracking-wider bg-orange/5 px-2.5 py-1 rounded">
-                        {proj.year}
-                      </span>
-                      <Briefcase className="w-4 h-4 text-steel/60" />
+                  {/* Card Top Site Image */}
+                  {proj.image && (
+                    <div className="h-44 w-full relative overflow-hidden bg-navy/10 border-b border-steel/15">
+                      <img 
+                        src={proj.image} 
+                        alt={proj.client} 
+                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent" />
+                      <div className="absolute top-3 left-3 z-10">
+                        <span className="font-mono text-xs text-white font-semibold uppercase tracking-wider bg-navy/80 backdrop-blur-md px-2.5 py-1 rounded border border-white/20">
+                          {proj.year}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="p-6 flex-grow flex flex-col justify-between relative z-10">
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-heading text-base font-bold text-navy">
+                          {proj.client}
+                        </h3>
+                        <Briefcase className="w-4 h-4 text-orange flex-shrink-0 mt-1" />
+                      </div>
+
+                      <p className="font-mono text-[10px] text-orange font-bold uppercase tracking-widest mb-3 flex items-center gap-1">
+                        <span>📍</span> {proj.location}
+                      </p>
+                      <p className="font-sans text-xs text-graphite/85 leading-relaxed">
+                        {proj.scope}
+                      </p>
                     </div>
 
-                    <h3 className="font-heading text-base font-bold text-navy mb-1">
-                      {proj.client}
-                    </h3>
-                    <p className="font-mono text-[10px] text-navy/60 uppercase tracking-widest mb-3">
-                      {proj.location}
-                    </p>
-                    <p className="font-sans text-xs text-graphite/85 leading-relaxed">
-                      {proj.scope}
-                    </p>
-                  </div>
-
-                  <div className="mt-6 pt-4 border-t border-steel/10 flex justify-between items-center relative z-10">
-                    <span className="text-[10px] font-mono text-safety-green font-bold uppercase tracking-wider flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-safety-green" />
-                      Scope Verified
-                    </span>
+                    <div className="mt-6 pt-4 border-t border-steel/10 flex justify-between items-center">
+                      <span className="text-[10px] font-mono text-safety-green font-bold uppercase tracking-wider flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-safety-green" />
+                        Scope Verified
+                      </span>
+                    </div>
                   </div>
 
                   {/* Faint background logo on hover */}
@@ -864,18 +900,21 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* MAJOR CLIENTS */}
-        <section className="py-16 bg-offwhite border-t border-b border-steel/20">
+        {/* MAJOR CLIENTS - CONTINUOUS INFINITE AUTO-SCROLL MARQUEE */}
+        <section className="py-16 bg-offwhite border-t border-b border-steel/20 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
               <h4 className="font-mono text-sm sm:text-base text-navy uppercase tracking-widest font-bold">
                 TRUSTED BY MAJOR INDUSTRIAL MANUFACTURERS & OPERATORS
               </h4>
             </div>
+          </div>
 
-            {/* Client logos grid with premium hover animations */}
-            <div className="flex flex-wrap justify-center items-center gap-6">
-              {clients.map((client, i) => {
+          {/* Marquee Container with Gradient Mask on Edges */}
+          <div className="relative w-full overflow-hidden flex [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+            <div className="animate-marquee flex gap-6 items-center py-4">
+              {/* Duplicate array twice for seamless infinite looping */}
+              {[...clients, ...clients].map((client, i) => {
                 const clientLogos: Record<string, string> = {
                   'Yokogawa': '/yokogawa-logo.png',
                   'Siemens Energy': '/siemens-logo.png',
@@ -885,19 +924,14 @@ export default function HomePage() {
                   'Honeywell': '/honeywell-logo.png',
                   'PCBL': '/pcbl-logo.png',
                   'IndianOil': '/indianoil-logo.png',
-                  'Balrampur Chini Mills': 'balarampur-chini-mills-logo.png'
+                  'Balrampur Chini Mills': '/balarampur-chini-mills-logo.png'
                 };
                 const logoUrl = clientLogos[client];
 
                 return (
-                  <motion.div 
+                  <div 
                     key={i} 
-                    whileHover={{ scale: 1.08, y: -8 }}
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: i * 0.05 }}
-                    className="bg-white border border-steel/20 hover:border-orange/40 hover:shadow-[0_20px_30px_-10px_rgba(11,43,76,0.18)] px-8 py-5 rounded-lg shadow-sm flex items-center justify-center h-20 w-48 transition-all duration-300 cursor-pointer"
+                    className="bg-white border border-steel/20 hover:border-orange/40 shadow-sm hover:shadow-[0_20px_30px_-10px_rgba(11,43,76,0.22)] px-8 py-5 rounded-lg flex items-center justify-center h-20 w-48 flex-shrink-0 transition-all duration-300 cursor-pointer group hover:-translate-y-2 hover:scale-105"
                   >
                     {logoUrl ? (
                       <img 
@@ -910,7 +944,7 @@ export default function HomePage() {
                         {client}
                       </span>
                     )}
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>

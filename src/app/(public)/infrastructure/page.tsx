@@ -235,6 +235,81 @@ export default function InfrastructurePage() {
           </div>
         </section>
 
+        {/* ON-SITE ENGINEERING TEAM EXPERTISE */}
+        <section className="py-20 bg-navy text-white relative overflow-hidden border-t border-b border-steel/15">
+          <div className="absolute inset-0 opacity-10 pointer-events-none z-0">
+            <div className="w-full h-full" style={{
+              backgroundImage: 'radial-gradient(circle, #D7E0E8 1px, transparent 1px)',
+              backgroundSize: '28px 28px'
+            }} />
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+              
+              {/* Left Column: Image (/about-us/6.jpeg) */}
+              <motion.div 
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="lg:col-span-6 relative"
+              >
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-steel/20 bg-navy/40 group">
+                  <img 
+                    src="/about-us/6.jpeg" 
+                    alt="KIW On-Site Engineering Team" 
+                    className="w-full h-auto max-h-[500px] object-contain group-hover:scale-105 transition-transform duration-700 block"
+                  />
+                  
+                  {/* Floating Experience Badge */}
+                  <div className="mt-4 bg-navy/95 backdrop-blur-md p-4 rounded-xl border border-steel/20 flex items-center justify-between">
+                    <div>
+                      <span className="font-mono text-[10px] text-orange font-bold uppercase tracking-wider block">DELEGATED FIELD FORCE</span>
+                      <span className="font-heading text-sm font-bold text-white">250+ Certified On-Site Specialists</span>
+                    </div>
+                    <span className="font-mono text-xs text-safety-green font-bold bg-safety-green/20 px-2.5 py-1 rounded border border-safety-green/30">100% HSE Compliant</span>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Right Column: Content */}
+              <motion.div 
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="lg:col-span-6 flex flex-col gap-5"
+              >
+                <span className="font-mono text-xs text-orange font-semibold uppercase tracking-widest flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-orange animate-pulse" />
+                  FIELD EXECUTION STRENGTH
+                </span>
+                <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight">
+                  Experienced Engineering & Technical Workforce
+                </h2>
+                <div className="h-1 w-20 bg-orange" />
+
+                <p className="font-sans text-sm sm:text-base text-steel/90 leading-relaxed">
+                  At Krishna Instrumentation Works (KIW), our field operations are driven by a dedicated team of site engineers, QA/QC inspectors, safety officers, and skilled instrument technicians. Every team member undergoes project-specific HSE inductions and technical bench training prior to plant deployment.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                  <div className="bg-white/5 border border-steel/10 p-4 rounded-lg">
+                    <h4 className="font-heading text-sm font-bold text-white mb-1">Continuous Training</h4>
+                    <p className="font-sans text-xs text-steel/70">Regular calibration bench drills and safety permit verification standards.</p>
+                  </div>
+                  <div className="bg-white/5 border border-steel/10 p-4 rounded-lg">
+                    <h4 className="font-heading text-sm font-bold text-white mb-1">Turnkey Supervision</h4>
+                    <p className="font-sans text-xs text-steel/70">Seamless coordination with main consultants and plant operation leads.</p>
+                  </div>
+                </div>
+              </motion.div>
+
+            </div>
+          </div>
+        </section>
+
         {/* EQUIPMENT REGISTRY */}
         <section className="py-20 bg-offwhite border-t border-b border-steel/15">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
