@@ -900,6 +900,131 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* WHAT WE EXECUTE */}
+        <section className="py-24 bg-navy text-white relative overflow-hidden border-t border-steel/15">
+          {/* Subtle background grid pattern */}
+          <div className="absolute inset-0 opacity-10 pointer-events-none z-0">
+            <div className="w-full h-full" style={{
+              backgroundImage: 'radial-gradient(circle, #D7E0E8 1px, transparent 1px)',
+              backgroundSize: '28px 28px'
+            }} />
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col items-center gap-3">
+              <span className="font-mono text-xs text-orange font-semibold uppercase tracking-widest flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-orange animate-pulse" />
+                EXECUTION CAPABILITIES
+              </span>
+              <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-white">
+                What We Execute
+              </h2>
+              <div className="h-1 w-16 bg-orange mt-1" />
+              <p className="font-sans text-base text-steel/85 mt-2">
+                Turnkey technical services and specialized execution scopes delivered across critical plant operations.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* 1. Instrumentation */}
+              <motion.div
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="bg-white/5 border border-steel/20 rounded-xl p-6 hover:bg-white/10 hover:border-orange/40 transition-all group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="p-3.5 rounded-lg bg-orange/15 text-orange w-fit mb-5 group-hover:bg-orange group-hover:text-white transition-colors">
+                    <Wrench className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-heading text-xl font-bold text-white mb-3 group-hover:text-orange transition-colors">
+                    Instrumentation
+                  </h3>
+                  <p className="font-sans text-xs sm:text-sm text-steel/80 leading-relaxed">
+                    Field instruments, JB installation, cable laying, cable termination, impulse piping, instrument tubing and loop checking.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-steel/10 flex items-center gap-2 font-mono text-[10px] text-orange uppercase tracking-wider font-bold">
+                  <span>Field Execution</span>
+                </div>
+              </motion.div>
+
+              {/* 2. Electrical */}
+              <motion.div
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="bg-white/5 border border-steel/20 rounded-xl p-6 hover:bg-white/10 hover:border-orange/40 transition-all group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="p-3.5 rounded-lg bg-orange/15 text-orange w-fit mb-5 group-hover:bg-orange group-hover:text-white transition-colors">
+                    <Zap className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-heading text-xl font-bold text-white mb-3 group-hover:text-orange transition-colors">
+                    Electrical
+                  </h3>
+                  <p className="font-sans text-xs sm:text-sm text-steel/80 leading-relaxed">
+                    Cable tray, power & control cables, termination, earthing, lighting and electrical testing.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-steel/10 flex items-center gap-2 font-mono text-[10px] text-orange uppercase tracking-wider font-bold">
+                  <span>Power & Distribution</span>
+                </div>
+              </motion.div>
+
+              {/* 3. Automation */}
+              <motion.div
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="bg-white/5 border border-steel/20 rounded-xl p-6 hover:bg-white/10 hover:border-orange/40 transition-all group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="p-3.5 rounded-lg bg-orange/15 text-orange w-fit mb-5 group-hover:bg-orange group-hover:text-white transition-colors">
+                    <Cpu className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-heading text-xl font-bold text-white mb-3 group-hover:text-orange transition-colors">
+                    Automation
+                  </h3>
+                  <p className="font-sans text-xs sm:text-sm text-steel/80 leading-relaxed">
+                    PLC, DCS, SCADA, HMI, control panels and system integration.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-steel/10 flex items-center gap-2 font-mono text-[10px] text-orange uppercase tracking-wider font-bold">
+                  <span>System Control</span>
+                </div>
+              </motion.div>
+
+              {/* 4. Commissioning */}
+              <motion.div
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="bg-white/5 border border-steel/20 rounded-xl p-6 hover:bg-white/10 hover:border-orange/40 transition-all group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="p-3.5 rounded-lg bg-orange/15 text-orange w-fit mb-5 group-hover:bg-orange group-hover:text-white transition-colors">
+                    <FileCheck className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-heading text-xl font-bold text-white mb-3 group-hover:text-orange transition-colors">
+                    Commissioning
+                  </h3>
+                  <p className="font-sans text-xs sm:text-sm text-steel/80 leading-relaxed">
+                    Pre-commissioning, functional testing, calibration, loop checking, commissioning and shutdown support.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-steel/10 flex items-center gap-2 font-mono text-[10px] text-orange uppercase tracking-wider font-bold">
+                  <span>Plant Startup Support</span>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
         {/* MAJOR CLIENTS - CONTINUOUS INFINITE AUTO-SCROLL MARQUEE */}
         <section className="py-16 bg-offwhite border-t border-b border-steel/20 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
