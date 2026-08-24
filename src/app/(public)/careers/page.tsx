@@ -155,7 +155,7 @@ export default function CareersPage() {
         consent: false
       });
       setResume(null);
-    } catch (err) {
+    } catch {
       setErrorMessage('Something went wrong. Please try again.');
       setSubmitStatus('error');
     } finally {

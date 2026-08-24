@@ -54,12 +54,9 @@ function ContactFormContent() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   
-  // Random captcha generation
-  const [captcha, setCaptcha] = useState({ num1: 0, num2: 0, result: 0 });
 
   // Generate Captcha and parse UTM parameters on mount
   useEffect(() => {
-    generateCaptcha();
     
     // Parse UTM Parameters
     if (searchParams) {
@@ -76,19 +73,8 @@ function ContactFormContent() {
           formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 300);
       }
-      setUtmParams(utm);
     }
   }, [searchParams]);
-
-  const generateCaptcha = () => {
-    const num1 = Math.floor(Math.random() * 9) + 1;
-    const num2 = Math.floor(Math.random() * 9) + 1;
-    setCaptcha({
-      num1,
-      num2,
-      result: num1 + num2
-    });
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -167,8 +153,7 @@ function ContactFormContent() {
         website: ''
       });
       setAttachment(null);
-      generateCaptcha();
-    } catch (err) {
+    } catch {
       setErrorMessage('Server error processing your request. Please try again or email directly.');
       setSubmitStatus('error');
     } finally {
@@ -596,7 +581,7 @@ export default function ContactPage() {
                     </div>
                     <div className="flex-grow">
                       <h4 className="font-heading text-sm font-extrabold text-navy">
-                        Varanasi Branch
+                        Regional Office
                       </h4>
                       <p className="font-sans text-xs text-graphite/80 leading-relaxed mt-2">
                         10A, Narottampur, Dafi, Lanka, Varanasi - 221011
@@ -615,10 +600,12 @@ export default function ContactPage() {
                     <Phone className="w-4 h-4 text-orange flex-shrink-0" />
                     <div className="flex flex-col">
                       <a href="tel:+918279672089" className="font-sans text-xs font-semibold text-graphite hover:text-orange transition-colors">
-                        +91 8279672089
+                        +91 8279672089-
+                        Sonu Tiwari
                       </a>
                       <a href="tel:+919451147479" className="font-sans text-xs font-semibold text-graphite hover:text-orange transition-colors">
-                        +91 9451147479
+                        +91 9451147479-
+                        Krishna Tiwari
                       </a>
                     </div>
                   </div>
@@ -696,7 +683,7 @@ export default function ContactPage() {
               {/* Varanasi Branch Office Map */}
               <div className="bg-offwhite border border-steel/20 rounded-xl p-4 shadow-sm flex flex-col gap-3 hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-center px-1">
-                  <span className="font-heading text-sm sm:text-base font-extrabold text-navy">Branch Office (Varanasi, UP)</span>
+                  <span className="font-heading text-sm sm:text-base font-extrabold text-navy">Regional Office (Varanasi, UP)</span>
                   <span className="font-mono text-[9px] bg-navy/10 text-navy px-1.5 py-0.5 rounded font-semibold">BRANCH</span>
                 </div>
                 <div className="w-full h-80 rounded-lg overflow-hidden relative bg-steel/10 border border-steel/20 shadow-inner">

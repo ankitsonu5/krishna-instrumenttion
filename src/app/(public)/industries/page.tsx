@@ -83,7 +83,7 @@ const industries = [
     icon: Droplets,
     desc: 'Real-time telemetry, ultrasonic flowmeters, pressure control loops, and SCADA automation for municipal and industrial water distribution.',
     challenge: 'Unaccounted water loss tracking, remote telemetry link reliability, and flow balancing.',
-    image: '/quality/cleanliness.png',
+    image: '/industries/smart-water-management.webp',
     logo: '/kiw-logo-1.png'
   },
   {
@@ -92,7 +92,7 @@ const industries = [
     icon: Waves,
     desc: 'Automated stormwater level sensors, overflow alarm telemetry, pump station controllers, and environmental compliance logging.',
     challenge: 'Peak monsoon runoff surge handling, hazardous gas detection, and sensor submergence durability.',
-    image: '/infrastructure-hero-bg.png',
+    image: '/industries/drainage-system.jpeg',
     logo: '/kiw-logo-1.png'
   },
   {
@@ -101,7 +101,7 @@ const industries = [
     icon: Anchor,
     desc: 'Automated radial gate hydraulic positioners, reservoir depth telemetry, flood monitoring sensors, and centralized spillway control desks.',
     challenge: 'High-torque gate position calibration, water head pressure fluctuations, and storm emergency overrides.',
-    image: '/industrial-hero-bg.png',
+    image: '/industries/smart-barrage.jpeg',
     logo: '/kiw-logo-1.png'
   },
   {
@@ -110,7 +110,7 @@ const industries = [
     icon: PipelineIcon,
     desc: 'CPIMS cathode protection telemetry, long-distance RTU monitoring, pressure transit leak detection, and smart ESD valve interlocks.',
     challenge: 'Cross-country signal transmission, remote solar RTU power stability, and high-pressure leak detection speed.',
-    image: '/industries-hero-bg.png',
+    image: '/industries/pipeline.jpeg',
     logo: '/industries/oil-gas-logo.png'
   },
   {
@@ -119,7 +119,7 @@ const industries = [
     icon: Layers,
     desc: 'Automated irrigation canal sluice gate controllers, solar telemetry stations, water discharge meters, and basin SCADA monitoring.',
     challenge: 'Remote rural power supply, sediment deposition sensor drift, and multi-distributary flow synchronization.',
-    image: '/services-hero-bg.png',
+    image: '/industries/canal-system.jpeg',
     logo: '/kiw-logo-1.png'
   }
 ];
@@ -198,7 +198,7 @@ export default function IndustriesPage() {
                           />
 
                           {/* Subtle Dark Overlay for Text Contrast */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/15 to-transparent" />
 
                           {/* Front Content */}
                           <div className="relative z-10 flex flex-col gap-2">

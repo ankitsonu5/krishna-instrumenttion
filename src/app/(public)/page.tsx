@@ -103,48 +103,42 @@ const projects = [
     location: 'Panipat, India',
     scope: 'Refinery expansion C&I installation, field instrument mounting, junction box cabling, and automation testing.',
     year: '2024',
-    logo: '/indianoil-logo.png',
-    image: '/about-us/1.jpeg'
+    logo: '/indianoil-logo.png'
   },
   {
     client: 'Chevron Bangladesh',
     location: 'Bibiyana Gas Field',
     scope: 'Gas plant commissioning support, calibration of safety valves, transmitter verification, and loop checks.',
     year: '2023',
-    logo: '/chevron-logo.png',
-    image: '/about-us/2.jpeg'
+    logo: '/chevron-logo.png'
   },
   {
     client: 'RIL Malaysia',
     location: 'Melaka Petrochemical Complex',
     scope: 'Petrochemical control system installation, DCS integration assistance, and loop checks.',
     year: '2023',
-    logo: '/ril-logo.png',
-    image: '/about-us/3.jpeg'
+    logo: '/ril-logo.png'
   },
   {
     client: 'NTPC Singrauli',
     location: 'Singrauli, India',
     scope: 'Super Thermal Power Station unit modernization, C&I cabling, and boiler instrumentation calibration.',
     year: '2022',
-    logo: '/ntpc-logo.png',
-    image: '/about-us/4.jpeg'
+    logo: '/ntpc-logo.png'
   },
   {
     client: 'NTPC Sipat',
     location: 'Sipat, India',
     scope: 'DCS / SCADA upgrade, system loop checking, and integration of smart transmitters.',
     year: '2022',
-    logo: '/ntpc-logo.png',
-    image: '/about-us/5.jpeg'
+    logo: '/ntpc-logo.png'
   },
   {
     client: 'Jindal Steel & Power Ltd. (JSPL)',
     location: 'Raigarh, India',
     scope: 'Blast furnace automation, instrumentation cabling, calibration, and loop checking.',
     year: '2021',
-    logo: '/jspl-logo.png',
-    image: '/about-us/7.jpeg'
+    logo: '/jspl-logo.png'
   }
 ];
 
@@ -700,7 +694,7 @@ export default function HomePage() {
                   />
 
                   {/* Dark Gradient Overlay for Contrast */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent transition-opacity duration-300 group-hover:from-navy/95 group-hover:via-navy/80" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/20 to-transparent transition-opacity duration-300 group-hover:from-navy/90 group-hover:via-navy/40" />
 
                   {/* Content Container with Hover Animation */}
                   <div className="absolute inset-0 p-6 flex flex-col justify-end text-white z-10">
@@ -840,44 +834,34 @@ export default function HomePage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
                   whileHover={{ y: -6 }}
-                  className="bg-offwhite border border-steel/20 rounded-lg overflow-hidden hover:shadow-md hover:border-steel/40 transition-all flex flex-col justify-between relative group z-0"
+                  className="bg-offwhite border border-steel/20 rounded-lg p-6 hover:shadow-lg hover:border-steel/40 transition-all flex flex-col justify-between relative group z-0"
                 >
-                  {/* Card Top Site Image */}
-                  {proj.image && (
-                    <div className="h-44 w-full relative overflow-hidden bg-navy/10 border-b border-steel/15">
-                      <img 
-                        src={proj.image} 
-                        alt={proj.client} 
-                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out" 
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent" />
-                      <div className="absolute top-3 left-3 z-10">
-                        <span className="font-mono text-xs text-white font-semibold uppercase tracking-wider bg-navy/80 backdrop-blur-md px-2.5 py-1 rounded border border-white/20">
+                  <div className="relative z-10 flex flex-col justify-between h-full">
+                    <div>
+                      <div className="flex justify-between items-center mb-4">
+                        <span className="font-mono text-xs text-orange font-semibold uppercase tracking-wider bg-orange/10 px-2.5 py-1 rounded border border-orange/20">
                           {proj.year}
                         </span>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="p-6 flex-grow flex flex-col justify-between relative z-10">
-                    <div>
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-heading text-base font-bold text-navy">
-                          {proj.client}
-                        </h3>
-                        <Briefcase className="w-4 h-4 text-orange flex-shrink-0 mt-1" />
+                        <div className="w-8 h-8 rounded-full bg-navy/5 flex items-center justify-center text-navy group-hover:bg-orange group-hover:text-white transition-colors duration-300">
+                          <Briefcase className="w-4 h-4" />
+                        </div>
                       </div>
 
-                      <p className="font-mono text-[10px] text-orange font-bold uppercase tracking-widest mb-3 flex items-center gap-1">
+                      <h3 className="font-heading text-lg font-bold text-navy mb-1.5">
+                        {proj.client}
+                      </h3>
+
+                      <p className="font-mono text-[11px] text-orange font-bold uppercase tracking-widest mb-3 flex items-center gap-1">
                         <span>📍</span> {proj.location}
                       </p>
-                      <p className="font-sans text-xs text-graphite/85 leading-relaxed">
+
+                      <p className="font-sans text-xs sm:text-sm text-graphite/85 leading-relaxed">
                         {proj.scope}
                       </p>
                     </div>
 
                     <div className="mt-6 pt-4 border-t border-steel/10 flex justify-between items-center">
-                      <span className="text-[10px] font-mono text-safety-green font-bold uppercase tracking-wider flex items-center gap-1">
+                      <span className="text-[10px] font-mono text-safety-green font-bold uppercase tracking-wider flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-safety-green" />
                         Scope Verified
                       </span>
@@ -886,7 +870,7 @@ export default function HomePage() {
 
                   {/* Faint background logo on hover */}
                   {proj.logo && (
-                    <div className="absolute right-4 bottom-4 w-24 h-24 opacity-0 group-hover:opacity-[0.15] transition-all duration-500 pointer-events-none transform translate-y-3 group-hover:translate-y-0 select-none z-0">
+                    <div className="absolute right-4 bottom-4 w-24 h-24 opacity-0 group-hover:opacity-[0.12] transition-all duration-500 pointer-events-none transform translate-y-3 group-hover:translate-y-0 select-none z-0">
                       <img 
                         src={proj.logo} 
                         alt="" 

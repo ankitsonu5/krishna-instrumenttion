@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, Suspense } from 'react';
+import React, { useState, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '../../components/Navbar';
@@ -28,6 +28,7 @@ function ProjectsContent() {
   const searchParams = useSearchParams();
   const statusParam = searchParams.get('status');
 
+  const [prevStatusParam, setPrevStatusParam] = useState(statusParam);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState(statusParam || 'All');
   const [selectedIndustry, setSelectedIndustry] = useState('All');
@@ -35,7 +36,9 @@ function ProjectsContent() {
   // Completed projects default to 'ledger' (Table format). Ongoing projects default to 'grid' (Cards format).
   const [layoutMode, setLayoutMode] = useState<'grid' | 'ledger'>(statusParam === 'Completed' ? 'ledger' : 'grid');
 
-  useEffect(() => {
+  // Adjust state during render when URL search param changes (avoids cascading render warning)
+  if (statusParam !== prevStatusParam) {
+    setPrevStatusParam(statusParam);
     if (statusParam) {
       setSelectedStatus(statusParam);
       if (statusParam === 'Completed') {
@@ -43,8 +46,10 @@ function ProjectsContent() {
       } else if (statusParam === 'Ongoing') {
         setLayoutMode('grid');
       }
+    } else {
+      setSelectedStatus('All');
     }
-  }, [statusParam]);
+  }
 
   // Extract unique filters
   const industries = useMemo(() => {
@@ -229,63 +234,91 @@ function ProjectsContent() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="bg-white border border-steel/20 rounded-lg overflow-x-auto shadow-sm"
+                  className="space-y-6"
                 >
-                  <table className="min-w-full divide-y divide-steel/15 text-left font-sans text-xs">
-                    <thead className="bg-navy text-white font-mono text-[10px] uppercase tracking-wider">
-                      <tr>
-                        <th className="px-6 py-4">Status</th>
-                        <th className="px-6 py-4">Project Title & Principal Client</th>
-                        <th className="px-6 py-4">Sector</th>
-                        <th className="px-6 py-4">Location</th>
-                        <th className="px-6 py-4">Period</th>
-                        <th className="px-6 py-4 text-right">Technical Spec</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-steel/10 text-graphite bg-white">
-                      {filteredProjects.map((proj, idx) => (
-                        <tr key={idx} className="hover:bg-offwhite/50 transition-colors">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex items-center gap-1 font-mono text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                              proj.status === 'Completed' 
-                                ? 'bg-safety-green/10 text-safety-green' 
-                                : 'bg-orange/10 text-orange'
-                            }`}>
-                              {proj.status === 'Completed' ? (
-                                <CheckCircle2 className="w-2.5 h-2.5" />
-                              ) : (
-                                <Clock className="w-2.5 h-2.5" />
-                              )}
-                              {proj.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="font-bold text-sm text-navy">{proj.title}</div>
-                            <div className="text-xs text-black-800/80 font-medium mt-0.5">{proj.client}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap font-mono text-[10px] text-black-800">
-                            {proj.industry}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-black-800 flex items-center gap-1 mt-1.5">
-                            <MapPin className="w-3 h-3 text-orange" />
-                            <span>{proj.location}</span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap font-mono text-[10px] text-black-800">
-                            {proj.period}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <Link 
-                              href={`/projects/${proj.slug}`}
-                              className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-orange hover:text-navy uppercase tracking-wider transition-colors"
-                            >
-                              <span>View Specs</span>
-                              <ArrowRight className="w-3 h-3" />
-                            </Link>
-                          </td>
+                  <div className="bg-white border border-steel/20 rounded-lg overflow-x-auto shadow-sm">
+                    <table className="min-w-full divide-y divide-steel/15 text-left font-sans text-xs">
+                      <thead className="bg-navy text-white font-mono text-[10px] uppercase tracking-wider">
+                        <tr>
+                          <th className="px-6 py-4">Status</th>
+                          <th className="px-6 py-4">Project Title & Principal Client</th>
+                          <th className="px-6 py-4">Sector</th>
+                          <th className="px-6 py-4">Location</th>
+                          <th className="px-6 py-4">Period</th>
+                          <th className="px-6 py-4 text-right">Technical Spec</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-steel/10 text-graphite bg-white">
+                        {filteredProjects.map((proj, idx) => (
+                          <tr key={idx} className="hover:bg-offwhite/50 transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`inline-flex items-center gap-1 font-mono text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                                proj.status === 'Completed' 
+                                  ? 'bg-safety-green/10 text-safety-green' 
+                                  : 'bg-orange/10 text-orange'
+                              }`}>
+                                {proj.status === 'Completed' ? (
+                                  <CheckCircle2 className="w-2.5 h-2.5" />
+                                ) : (
+                                  <Clock className="w-2.5 h-2.5" />
+                                )}
+                                {proj.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="font-bold text-sm text-navy">{proj.title}</div>
+                              <div className="text-xs text-black-800/80 font-medium mt-0.5">{proj.client}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap font-mono text-[10px] text-black-800">
+                              {proj.industry}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-black-800 flex items-center gap-1 mt-1.5">
+                              <MapPin className="w-3 h-3 text-orange" />
+                              <span>{proj.location}</span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap font-mono text-[10px] text-black-800">
+                              {proj.period}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                              <Link 
+                                href={`/projects/${proj.slug}`}
+                                className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-orange hover:text-navy uppercase tracking-wider transition-colors"
+                              >
+                                <span>View Specs</span>
+                                <ArrowRight className="w-3 h-3" />
+                              </Link>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* 200+ Projects Completed Highlight Banner */}
+                  <div className="bg-white border border-steel/20 rounded-lg p-5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-safety-green/10 flex items-center justify-center text-safety-green flex-shrink-0">
+                        <CheckCircle2 className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <div className="font-heading text-base sm:text-lg font-bold text-navy flex items-center gap-2.5">
+                          <span>200+ Projects Completed</span>
+                          <span className="font-mono text-[10px] text-safety-green font-bold bg-safety-green/10 px-2.5 py-0.5 rounded border border-safety-green/20">
+                            PAN INDIA RECORD
+                          </span>
+                        </div>
+                        <p className="font-sans text-xs sm:text-sm text-graphite/80 mt-1">
+                          Successfully executed over 200+ industrial instrumentation, electrical, mechanical, and automation project scopes across India with exceptional safety records.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2.5 bg-offwhite border border-steel/20 px-4 py-2.5 rounded-lg flex-shrink-0">
+                      <span className="font-heading text-2xl sm:text-3xl font-extrabold text-orange">200+</span>
+                      <span className="font-mono text-xs text-navy font-bold uppercase tracking-wider leading-tight">
+                        Projects<br />Completed
+                      </span>
+                    </div>
+                  </div>
                 </motion.div>
 
               ) : (
