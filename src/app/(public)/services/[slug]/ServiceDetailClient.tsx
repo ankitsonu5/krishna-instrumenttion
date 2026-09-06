@@ -17,8 +17,53 @@ import {
   Calendar,
   ArrowRight,
   ShieldCheck,
-  Info
+  Info,
+  Gauge,
+  Factory,
+  Building2,
+  HardHat,
+  Flame,
+  Droplets,
+  Waves,
+  Compass,
+  SlidersHorizontal,
+  CircuitBoard,
+  Radio,
+  Cog,
+  Server,
+  Box,
+  FileText,
+  Briefcase
 } from 'lucide-react';
+
+const detailIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Wrench,
+  Zap,
+  Settings,
+  Layers,
+  Cpu,
+  FileCheck,
+  Activity,
+  ShieldCheck,
+  Calendar,
+  CheckCircle2,
+  Gauge,
+  Factory,
+  Building2,
+  HardHat,
+  Flame,
+  Droplets,
+  Waves,
+  Compass,
+  Sliders: SlidersHorizontal,
+  CircuitBoard,
+  Radio,
+  Cog,
+  Server,
+  Box,
+  FileText,
+  Briefcase,
+};
 
 const servicesData: Record<string, {
   title: string;
@@ -161,13 +206,41 @@ interface ServiceDetailClientProps {
 }
 
 export default function ServiceDetailClient({ slug }: ServiceDetailClientProps) {
-  const data = servicesData[slug];
+  const [data, setData] = React.useState(servicesData[slug] || null);
+
+  React.useEffect(() => {
+    async function loadService() {
+      try {
+        const res = await fetch("/api/services");
+        if (!res.ok) return;
+        const ct = res.headers.get("content-type");
+        if (!ct || !ct.includes("application/json")) return;
+        const resJson = await res.json();
+        if (resJson.ok && Array.isArray(resJson.data)) {
+          const found = resJson.data.find((item: any) => item.slug === slug);
+          if (found) {
+            setData({
+              title: found.title,
+              subtitle: found.short_desc,
+              icon: detailIconMap[found.icon_name] || Wrench,
+              description: found.short_desc,
+              bullets: found.bullets || [],
+              ctaText: `Request a Quote for ${found.title}`,
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch dynamic service detail:", err);
+      }
+    }
+    loadService();
+  }, [slug]);
 
   if (!data) {
     notFound();
   }
 
-  const Icon = data.icon;
+  const Icon = data.icon || Wrench;
 
   return (
     <div className="flex flex-col min-h-screen">

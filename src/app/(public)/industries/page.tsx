@@ -124,7 +124,49 @@ const industries = [
   }
 ];
 
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Flame,
+  Factory,
+  Compass,
+  Settings,
+  Building2,
+  Activity,
+  Droplets,
+  Waves,
+  Layers,
+};
+
 export default function IndustriesPage() {
+  const [industriesData, setIndustriesData] = React.useState(industries);
+
+  React.useEffect(() => {
+    async function loadIndustries() {
+      try {
+        const res = await fetch('/api/industries');
+        if (!res.ok) return;
+        const ct = res.headers.get('content-type');
+        if (!ct || !ct.includes('application/json')) return;
+        const data = await res.json();
+        if (data.ok && Array.isArray(data.data) && data.data.length > 0) {
+          setIndustriesData(
+            data.data.map((item: any) => ({
+              title: item.title,
+              slug: item.slug,
+              icon: iconMap[item.icon_name] || Factory,
+              desc: item.short_desc,
+              challenge: item.challenge,
+              image: item.image_url,
+              logo: item.logo_url,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic industries:', err);
+      }
+    }
+    loadIndustries();
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -163,17 +205,34 @@ export default function IndustriesPage() {
               </h1>
 
               <p className="font-sans text-base sm:text-lg text-steel/90 leading-relaxed">
-                KIW supports India&apos;s core sectors with reliable execution, field installations, and calibration services tailored for high-hazard and high-precision zones.
+                From high-temperature thermal power generation to precision process plants, we deploy trained site teams and equipment across India&apos;s most demanding sectors.
               </p>
             </div>
           </div>
         </section>
 
-        {/* INDUSTRIES GRID WITH 3D FLIP CARDS */}
+        {/* INDUSTRIES GRID SECTION */}
         <section className="py-20 bg-offwhite">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 pb-4 border-b border-steel/20 gap-4">
+              <div>
+                <span className="font-mono text-xs text-orange font-bold uppercase tracking-widest block mb-1">
+                  Core Expertise
+                </span>
+                <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-navy">
+                  Multi-Sector Execution Capabilities
+                </h2>
+              </div>
+              <div className="bg-safety-green/10 text-safety-green px-3.5 py-1 rounded text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5 flex-shrink-0">
+                <ShieldCheck className="w-4 h-4" />
+                Specialized Teams
+              </div>
+            </div>
+
+            {/* 3D Flip Card Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {industries.map((ind, i) => {
+              {industriesData.map((ind, i) => {
                 return (
                   <motion.div 
                     key={i} 

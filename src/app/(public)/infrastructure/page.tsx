@@ -144,12 +144,55 @@ const equipmentRegistry = [
 
 export default function InfrastructurePage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [equipmentList, setEquipmentList] = useState(equipmentRegistry);
+  const [manpowerList, setManpowerList] = useState(manpowerCategories);
+
+  React.useEffect(() => {
+    async function loadInfrastructure() {
+      try {
+        const res = await fetch('/api/infrastructure');
+        if (!res.ok) return;
+        const ct = res.headers.get('content-type');
+        if (!ct || !ct.includes('application/json')) return;
+        const data = await res.json();
+        if (data.ok && data.data) {
+          if (Array.isArray(data.data.equipment) && data.data.equipment.length > 0) {
+            setEquipmentList(
+              data.data.equipment.map((e: any) => ({
+                name: e.name,
+                category: e.category,
+                manufacturer: e.manufacturer,
+                model: e.model,
+                qty: e.qty,
+                calibrationStatus: e.calibration_status,
+                lastCalDate: e.last_cal_date,
+                useCase: e.use_case,
+                availability: e.availability,
+              }))
+            );
+          }
+          if (Array.isArray(data.data.manpower) && data.data.manpower.length > 0) {
+            setManpowerList(
+              data.data.manpower.map((m: any) => ({
+                name: m.name,
+                count: m.count_label,
+                desc: m.description,
+              }))
+            );
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic infrastructure:', err);
+      }
+    }
+    loadInfrastructure();
+  }, []);
 
   const categories = ['All', 'Calibration Equipment', 'Electrical Testing Equipment', 'Loop and Signal Tools', 'Automation Tools', 'Mechanical / Installation Tools', 'Safety Equipment'];
 
   const filteredEquipment = selectedCategory === 'All' 
-    ? equipmentRegistry 
-    : equipmentRegistry.filter(e => e.category === selectedCategory);
+    ? equipmentList 
+    : equipmentList.filter(e => e.category === selectedCategory);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -207,7 +250,7 @@ export default function InfrastructurePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {manpowerCategories.map((item, idx) => (
+              {manpowerList.map((item, idx) => (
                 <motion.div 
                   key={idx} 
                   initial={{ opacity: 0, y: 30 }}

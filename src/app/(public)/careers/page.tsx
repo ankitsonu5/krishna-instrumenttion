@@ -13,6 +13,7 @@ import {
   Award,
   FileText,
   Briefcase,
+  Wrench,
   Upload,
   CheckCircle,
   File,
@@ -24,6 +25,22 @@ import {
   Calendar,
   Building
 } from 'lucide-react';
+
+const careersIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Cpu,
+  Zap,
+  Sliders,
+  Users,
+  ShieldCheck,
+  Award,
+  FileText,
+  Briefcase,
+  Wrench,
+  Clock,
+  Calendar,
+  Building,
+  CheckCircle,
+};
 
 const candidateCategories = [
   {
@@ -96,6 +113,36 @@ export default function CareersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [openings, setOpenings] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    async function loadCareers() {
+      try {
+        const res = await fetch('/api/careers');
+        if (!res.ok) return;
+        const ct = res.headers.get('content-type');
+        if (!ct || !ct.includes('application/json')) return;
+        const data = await res.json();
+        if (data.ok && Array.isArray(data.data) && data.data.length > 0) {
+          setOpenings(
+            data.data.map((item: any) => ({
+              id: item.id,
+              title: item.title,
+              icon: (item.icon_name && careersIconMap[item.icon_name]) || Briefcase,
+              desc: item.description,
+              roleValue: item.role_value || item.title,
+              department: item.department,
+              experience: item.experience,
+              location: item.location
+            }))
+          );
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic careers:', err);
+      }
+    }
+    loadCareers();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -136,11 +183,60 @@ export default function CareersPage() {
     }
 
     setIsSubmitting(true);
-    setSubmitStatus('idle');
-
-    // Simulate API Submission
+    // Real API Submission to Backend & SQLite DB
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      let uploadedAttachmentUrl = "";
+      let uploadedAttachmentName = "";
+      let uploadedAttachmentSize = "";
+
+      if (resume) {
+        const uploadData = new FormData();
+        uploadData.append("file", resume);
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: uploadData,
+        });
+
+        const uploadJson = await uploadRes.json();
+        if (!uploadRes.ok || !uploadJson.ok || !uploadJson.fileUrl) {
+          throw new Error(uploadJson.error || "Failed to upload resume file.");
+        }
+        uploadedAttachmentUrl = uploadJson.fileUrl;
+        uploadedAttachmentName = uploadJson.originalName || resume.name;
+        uploadedAttachmentSize = uploadJson.size || "";
+      }
+
+      const cleanCandidateMessage = `Applied for ${formData.role}. Current Location: ${formData.currentLocation || 'N/A'}, Total Experience: ${formData.experience || 'N/A'}, Preferred Work Location: ${formData.preferredLocation || 'PAN India'}, Notice Period: ${formData.noticePeriod || 'Immediate'}.`;
+
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'career',
+          client_name: formData.fullName,
+          company: `Candidate (${formData.currentLocation || 'India'})`,
+          designation: formData.role || 'Job Applicant',
+          email: formData.email,
+          phone: formData.phone,
+          product_interest: `Position: ${formData.role}`,
+          quantity: `Exp: ${formData.experience}`,
+          location: formData.currentLocation || '',
+          experience: formData.experience || '',
+          notice_period: formData.noticePeriod || '',
+          application: `Pref Loc: ${formData.preferredLocation || 'PAN India'}`,
+          message: cleanCandidateMessage,
+          attachment_url: uploadedAttachmentUrl,
+          attachment_name: uploadedAttachmentName,
+          attachment_size: uploadedAttachmentSize,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || 'Failed to submit application.');
+      }
+
       setSubmitStatus('success');
       // Reset form
       setFormData({
@@ -155,8 +251,8 @@ export default function CareersPage() {
         consent: false
       });
       setResume(null);
-    } catch {
-      setErrorMessage('Something went wrong. Please try again.');
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Something went wrong submitting your application. Please try again.');
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -238,8 +334,8 @@ export default function CareersPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {candidateCategories.map((cat, idx) => {
-                const Icon = cat.icon;
+              {(openings.length > 0 ? openings : candidateCategories).map((cat: any, idx: number) => {
+                const Icon = cat.icon || Briefcase;
                 return (
                   <div
                     key={idx}
@@ -257,7 +353,7 @@ export default function CareersPage() {
                       </p>
                     </div>
                     <button
-                      onClick={() => handleApplyNow(cat.roleValue)}
+                      onClick={() => handleApplyNow(cat.roleValue || cat.title)}
                       className="font-sans text-xs font-semibold text-orange hover:text-navy flex items-center gap-1 mt-auto cursor-pointer transition-colors duration-200"
                     >
                       <span>Apply for this Role</span>
@@ -407,14 +503,14 @@ export default function CareersPage() {
                           className="w-full bg-offwhite border border-steel/30 rounded px-3 py-2 text-sm font-sans focus:outline-none focus:border-navy transition-all"
                         >
                           <option value="">Select applied role</option>
-                          <option value="Instrumentation Engineer">Instrumentation Engineer</option>
-                          <option value="Electrical Engineer">Electrical Engineer</option>
-                          <option value="Automation / PLC / DCS Professional">Automation / PLC / DCS Professional</option>
-                          <option value="Site Supervisor">Site Supervisor</option>
-                          <option value="Technician">Technician</option>
-                          <option value="QA/QC Professional">QA/QC Professional</option>
-                          <option value="Safety Officer">Safety Officer</option>
-                          <option value="Project Support Staff">Project Support Staff</option>
+                          {(openings.length > 0 ? openings : candidateCategories).map((cat: any, idx: number) => {
+                            const val = cat.roleValue || cat.title;
+                            return (
+                              <option key={idx} value={val}>
+                                {val}
+                              </option>
+                            );
+                          })}
                           <option value="Other">Other / General Application</option>
                         </select>
                       </div>

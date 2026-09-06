@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import React from 'react';
 import Link from 'next/link';
 import Navbar from '../components/Navbar';
@@ -20,8 +21,62 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
-  ArrowRight
+  ArrowRight,
+  Gauge,
+  Factory,
+  Building2,
+  HardHat,
+  Flame,
+  Droplets,
+  Waves,
+  Compass,
+  SlidersHorizontal,
+  CircuitBoard,
+  Radio,
+  Cog,
+  Server,
+  Box,
+  FileText
 } from 'lucide-react';
+
+const homeIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Wrench,
+  Zap,
+  Settings,
+  Layers,
+  Cpu,
+  FileCheck,
+  Activity,
+  ShieldCheck,
+  Calendar,
+  CheckCircle2,
+  Gauge,
+  Factory,
+  Building2,
+  HardHat,
+  Flame,
+  Droplets,
+  Waves,
+  Compass,
+  Sliders: SlidersHorizontal,
+  CircuitBoard,
+  Radio,
+  Cog,
+  Server,
+  Box,
+  FileText,
+  Briefcase,
+};
+
+interface Banner {
+  id: number;
+  title: string;
+  subtitle: string;
+  media_type: "video" | "image";
+  media_url: string;
+  cta_text: string;
+  cta_link: string;
+}
 
 const stats = [
   { value: '13+', label: 'Years of Experience' },
@@ -219,6 +274,51 @@ function Counter({ value, duration = 1500 }: { value: string; duration?: number 
 export default function HomePage() {
   const [trackIndex, setTrackIndex] = React.useState(1);
   const [isTransitioning, setIsTransitioning] = React.useState(true);
+  const [banners, setBanners] = useState<Banner[]>([]);
+  const [servicesList, setServicesList] = useState(services);
+
+  useEffect(() => {
+    async function loadBanners() {
+      try {
+        const res = await fetch("/api/banners");
+        if (!res.ok) return;
+        const ct = res.headers.get("content-type");
+        if (!ct || !ct.includes("application/json")) return;
+        const data = await res.json();
+        if (data.ok && Array.isArray(data.data) && data.data.length > 0) {
+          setBanners(data.data);
+        }
+      } catch (err) {
+        console.error("Failed to load hero banner from API:", err);
+      }
+    }
+
+    async function loadServices() {
+      try {
+        const res = await fetch("/api/services");
+        if (!res.ok) return;
+        const ct = res.headers.get("content-type");
+        if (!ct || !ct.includes("application/json")) return;
+        const data = await res.json();
+        if (data.ok && Array.isArray(data.data) && data.data.length > 0) {
+          setServicesList(
+            data.data.map((item: any) => ({
+              title: item.title,
+              desc: item.short_desc,
+              icon: homeIconMap[item.icon_name] || Wrench,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error("Failed to load services from API:", err);
+      }
+    }
+
+    loadBanners();
+    loadServices();
+  }, []);
+
+  const currentBanner = banners.length > 0 ? banners[0] : null;
 
   const nextService = () => {
     if (!isTransitioning) setIsTransitioning(true);
@@ -231,16 +331,16 @@ export default function HomePage() {
   };
 
   const handleTransitionEnd = () => {
-    if (trackIndex >= services.length + 1) {
+    if (trackIndex >= servicesList.length + 1) {
       setIsTransitioning(false);
       setTrackIndex(1);
     } else if (trackIndex <= 0) {
       setIsTransitioning(false);
-      setTrackIndex(services.length);
+      setTrackIndex(servicesList.length);
     }
   };
 
-  const activeServiceIdx = ((trackIndex - 1) % services.length + services.length) % services.length;
+  const activeServiceIdx = ((trackIndex - 1) % servicesList.length + servicesList.length) % servicesList.length;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -251,16 +351,37 @@ export default function HomePage() {
         {/* HERO SECTION - Responsive Height (min-h-screen on mobile, 100vh on desktop) */}
         <section className="relative bg-navy text-white min-h-screen lg:h-screen flex items-center pt-24 sm:pt-28 lg:pt-20 pb-12 lg:pb-8 overflow-hidden border-b border-steel/10">
           
-          {/* Background Video */}
-          <video 
-            autoPlay 
-            loop 
-            muted 
-            playsInline 
-            className="absolute inset-0 w-full h-full object-cover z-0"
-          >
-            <source src="/kiw-hero-video.mp4" type="video/mp4" />
-          </video>
+          {/* Background Media (Dynamic Video or Image from Admin, with fallback) */}
+          {currentBanner ? (
+            currentBanner.media_type === "video" ? (
+              <video 
+                key={currentBanner.media_url}
+                autoPlay 
+                loop 
+                muted 
+                playsInline 
+                className="absolute inset-0 w-full h-full object-cover z-0"
+              >
+                <source src={currentBanner.media_url} type="video/mp4" />
+              </video>
+            ) : (
+              <img
+                src={currentBanner.media_url}
+                alt={currentBanner.title || "Krishna Instrumentation"}
+                className="absolute inset-0 w-full h-full object-cover z-0"
+              />
+            )
+          ) : (
+            <video 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              className="absolute inset-0 w-full h-full object-cover z-0"
+            >
+              <source src="/kiw-hero-video.mp4" type="video/mp4" />
+            </video>
+          )}
           
           {/* Overlay with black gradient for maximum video clarity and visual contrast */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/25 z-0" />
@@ -319,10 +440,16 @@ export default function HomePage() {
                   transition={{ duration: 0.6, delay: 0.1 }}
                   className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight"
                 >
-                  Engineering Precision for <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-steel to-white/90">
-                    Mission-Critical Industries.
-                  </span>
+                  {currentBanner?.title ? (
+                    currentBanner.title
+                  ) : (
+                    <>
+                      Engineering Precision for <br />
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-steel to-white/90">
+                        Mission-Critical Industries.
+                      </span>
+                    </>
+                  )}
                 </motion.h1>
 
                 <motion.p 
@@ -331,7 +458,7 @@ export default function HomePage() {
                   transition={{ duration: 0.6, delay: 0.2 }}
                   className="font-sans text-sm sm:text-base text-steel/90 max-w-2xl leading-relaxed"
                 >
-                  Krishna Instrumentation Works delivers instrumentation, electrical, automation, testing, commissioning, calibration and industrial execution solutions for power plants, oil and gas facilities and process industries across India.
+                  {currentBanner?.subtitle || "Krishna Instrumentation Works delivers instrumentation, electrical, automation, testing, commissioning, calibration and industrial execution solutions for power plants, oil and gas facilities and process industries across India."}
                 </motion.p>
 
                 <motion.div 
@@ -341,10 +468,10 @@ export default function HomePage() {
                   className="flex flex-col sm:flex-row gap-4 mt-2"
                 >
                   <Link
-                    href="/contact"
+                    href={currentBanner?.cta_link || "/contact"}
                     className="font-sans text-sm font-semibold bg-orange text-white px-8 py-3.5 rounded hover:bg-orange/90 transition-all text-center shadow-lg shadow-orange/20 border border-orange/10 hover:border-orange/20"
                   >
-                    Discuss Your Project
+                    {currentBanner?.cta_text || "Discuss Your Project"}
                   </Link>
                   <a
                     href="#services"
@@ -541,17 +668,18 @@ export default function HomePage() {
                 style={{ '--track-idx': trackIndex } as React.CSSProperties}
               >
                 {(() => {
+                  if (servicesList.length === 0) return null;
                   // Buffer clones at start and end for smooth endless scrolling
                   const extendedServices = [
-                    { ...services[services.length - 1], realIndex: services.length - 1 }, // extIndex = 0
-                    ...services.map((s, idx) => ({ ...s, realIndex: idx })),              // extIndex = 1 to 9
-                    { ...services[0], realIndex: 0 },                                     // extIndex = 10
-                    { ...services[1], realIndex: 1 },                                     // extIndex = 11
-                    { ...services[2], realIndex: 2 }                                      // extIndex = 12
+                    { ...servicesList[servicesList.length - 1], realIndex: servicesList.length - 1 }, // extIndex = 0
+                    ...servicesList.map((s, idx) => ({ ...s, realIndex: idx })),                      // extIndex = 1 to N
+                    { ...servicesList[0], realIndex: 0 },                                             // extIndex = N+1
+                    { ...servicesList[1] || servicesList[0], realIndex: 1 },                          // extIndex = N+2
+                    { ...servicesList[2] || servicesList[0], realIndex: 2 }                           // extIndex = N+3
                   ];
 
                   return extendedServices.map((svc, extIdx) => {
-                    const IconComponent = svc.icon;
+                    const IconComponent = svc.icon || Wrench;
                     const isCenter = extIdx === trackIndex;
 
                     return (
@@ -633,7 +761,7 @@ export default function HomePage() {
 
             {/* Bottom Dots Indicator */}
             <div className="flex justify-center items-center gap-2 mt-8">
-              {services.map((_, dotIdx) => (
+              {servicesList.map((_, dotIdx) => (
                 <button
                   key={dotIdx}
                   onClick={() => {

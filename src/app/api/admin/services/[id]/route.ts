@@ -1,0 +1,31 @@
+import { NextResponse } from "next/server";
+import * as repo from "@server/repo.mjs";
+
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> | { id: string } }
+) {
+  try {
+    const resolvedParams = await Promise.resolve(params);
+    const id = Number(resolvedParams?.id);
+    const body = await request.json();
+    const updated = repo.updateService(id, body);
+    return NextResponse.json({ ok: true, data: updated });
+  } catch (err: any) {
+    return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> | { id: string } }
+) {
+  try {
+    const resolvedParams = await Promise.resolve(params);
+    const id = Number(resolvedParams?.id);
+    repo.deleteService(id);
+    return NextResponse.json({ ok: true, message: "Service deleted" });
+  } catch (err: any) {
+    return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
+  }
+}

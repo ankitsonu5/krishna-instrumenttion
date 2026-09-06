@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -85,6 +86,34 @@ const clientPartners = [
 ];
 
 export default function ClientsPage() {
+  const [clientsList, setClientsList] = useState(clientPartners);
+
+  useEffect(() => {
+    async function loadClients() {
+      try {
+        const res = await fetch('/api/clients');
+        if (!res.ok) return;
+        const ct = res.headers.get('content-type');
+        if (!ct || !ct.includes('application/json')) return;
+        const data = await res.json();
+        if (data.ok && Array.isArray(data.data) && data.data.length > 0) {
+          setClientsList(
+            data.data.map((c: any) => ({
+              name: c.name,
+              role: c.role,
+              desc: c.description,
+              status: c.status,
+              logo: c.logo_url || '/kiw-logo-1.png',
+            }))
+          );
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic clients:', err);
+      }
+    }
+    loadClients();
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -138,7 +167,7 @@ export default function ClientsPage() {
                 <div>
                   <h4 className="font-heading text-sm font-bold text-navy">Relationship Wording & Logo Compliance</h4>
                   <p className="font-sans text-xs text-graphite/75 leading-relaxed mt-1">
-                    To comply with client brand policies and industrial regulations, the relationship category (Direct Client, Principal Contractor, Technology Provider, or Site Owner) has been clearly documented and verified for each organization.
+                    Logos and brand names are displayed to truthfully represent the industrial site owners, facilities, and main contractor ecosystems where KIW personnel have executed work.
                   </p>
                 </div>
               </div>
@@ -149,58 +178,47 @@ export default function ClientsPage() {
             </div>
 
             {/* List Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {clientPartners.map((item, idx) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {clientsList.map((item: any, idx: number) => (
                 <div 
                   key={idx} 
-                  className="bg-white border border-steel/20 rounded-lg overflow-hidden hover:shadow-md hover:border-steel/40 transition-all flex flex-col justify-between relative group"
+                  className="bg-white border border-steel/25 rounded-2xl p-6 hover:shadow-xl hover:border-orange/40 transition-all duration-300 flex flex-col justify-between relative group"
                 >
-                  {/* Card Top Site Image */}
-                  {item.image && (
-                    <div className="h-44 w-full relative overflow-hidden bg-navy/10 border-b border-steel/15">
-                      <img 
-                        src={item.image} 
-                        alt={item.name} 
-                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out" 
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent" />
-                      <div className="absolute top-3 left-3 z-10">
-                        <span className="font-mono text-[9px] font-bold uppercase tracking-wider bg-navy/80 backdrop-blur-md text-orange px-2.5 py-1 rounded border border-white/10">
-                          {item.role}
-                        </span>
+                  <div>
+                    {/* Top Row: Client Logo & Role Badge */}
+                    <div className="flex items-center justify-between gap-3 mb-5 pb-4 border-b border-steel/15">
+                      <div className="w-14 h-14 bg-offwhite rounded-xl p-2 border border-steel/20 flex items-center justify-center shadow-xs group-hover:border-orange/30 transition-colors">
+                        <img 
+                          src={item.logo || '/kiw-logo-1.png'} 
+                          alt={`${item.name} logo`} 
+                          className="max-w-full max-h-full object-contain" 
+                        />
                       </div>
+                      <span className="font-mono text-[10px] font-bold uppercase tracking-wider bg-navy/5 text-navy group-hover:bg-orange/10 group-hover:text-orange px-3 py-1.5 rounded-lg border border-navy/10 group-hover:border-orange/20 transition-colors text-right">
+                        {item.role}
+                      </span>
                     </div>
-                  )}
 
-                  {/* Background logo on hover */}
-                  <div className="absolute right-2 bottom-8 w-28 h-28 opacity-0 group-hover:opacity-[0.18] pointer-events-none transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 flex items-center justify-center z-0">
-                    <img 
-                      src={item.logo} 
-                      alt="" 
-                      className="max-w-full max-h-full object-contain" 
-                    />
+                    {/* Title */}
+                    <h3 className="font-heading text-lg font-bold text-navy mb-2 leading-snug group-hover:text-navy">
+                      {item.name}
+                    </h3>
+                    
+                    {/* Description */}
+                    <p className="font-sans text-xs text-graphite/80 leading-relaxed mt-2">
+                      {item.desc}
+                    </p>
                   </div>
 
-                  <div className="p-6 flex-grow flex flex-col justify-between relative z-10">
-                    <div>
-                      {/* Title */}
-                      <h3 className="font-heading text-base font-bold text-navy mb-2">
-                        {item.name}
-                      </h3>
-                      
-                      <p className="font-sans text-xs text-graphite/80 leading-relaxed">
-                        {item.desc}
-                      </p>
-                    </div>
-
-                    {/* Stamp */}
-                    <div className="mt-6 pt-4 border-t border-steel/10 flex justify-between items-center text-[10px] font-mono text-black">
-                      <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-safety-green" />
-                        HSE Compliant
-                      </span>
-                      <span className="font-semibold text-navy">{item.status}</span>
-                    </div>
+                  {/* Stamp Footer */}
+                  <div className="mt-6 pt-4 border-t border-steel/10 flex justify-between items-center text-[10px] font-mono">
+                    <span className="flex items-center gap-1.5 text-graphite/90">
+                      <span className="w-2 h-2 rounded-full bg-safety-green" />
+                      HSE Compliant
+                    </span>
+                    <span className="font-semibold text-navy bg-navy/5 px-2.5 py-1 rounded-md border border-navy/10">
+                      {item.status}
+                    </span>
                   </div>
                 </div>
               ))}

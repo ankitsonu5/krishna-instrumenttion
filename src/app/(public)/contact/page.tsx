@@ -117,22 +117,67 @@ function ContactFormContent() {
     if (!formData.consent) return setError('You must consent to the storage policies to submit an RFQ.');
 
     setIsSubmitting(true);
-    setSubmitStatus('idle');
-
-    // Simulate API Submission (client-server validation & mailing)
+    // Real API Submission to Backend & SQLite DB
     try {
-      // Simulate endpoint post payload logic
-      const submissionPayload = {
-        ...formData,
-        attachmentName: attachment ? attachment.name : null,
-        utm: utmParams,
-        submittedAt: new Date().toISOString()
-      };
+      let uploadedAttachmentUrl = "";
+      let uploadedAttachmentName = "";
+      let uploadedAttachmentSize = "";
 
-      console.log('Sending RFQ Payload to server:', submissionPayload);
-      
-      // Simulate server-side processing & mail notifications (2 seconds)
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      if (attachment) {
+        const uploadData = new FormData();
+        uploadData.append("file", attachment);
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: uploadData,
+        });
+
+        const uploadJson = await uploadRes.json();
+        if (!uploadRes.ok || !uploadJson.ok || !uploadJson.fileUrl) {
+          throw new Error(uploadJson.error || "Failed to upload attached document.");
+        }
+        uploadedAttachmentUrl = uploadJson.fileUrl;
+        uploadedAttachmentName = uploadJson.originalName || attachment.name;
+        uploadedAttachmentSize = uploadJson.size || "";
+      }
+
+      // Build clean message
+      let cleanMessage = formData.requirementSummary ? formData.requirementSummary.trim() : 'Requesting quotation and technical discussion.';
+      if (formData.projectStatus || formData.startDate) {
+        const metaParts = [];
+        if (formData.projectStatus) metaParts.push(`Status: ${formData.projectStatus}`);
+        if (formData.startDate) metaParts.push(`Target Start: ${formData.startDate}`);
+        cleanMessage += ` (${metaParts.join(', ')})`;
+      }
+
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'contact',
+          client_name: formData.name,
+          company: formData.company || 'Individual Client',
+          designation: formData.designation || '',
+          email: formData.email,
+          phone: formData.phone,
+          product_interest: formData.service || formData.industry || 'General RFQ / Quotation',
+          quantity: formData.projectLocation ? `Site: ${formData.projectLocation}` : '1 Project',
+          location: formData.projectLocation || '',
+          application: formData.industry || 'Industrial Plant Execution',
+          project_status: formData.projectStatus || '',
+          start_date: formData.startDate || '',
+          message: cleanMessage,
+          attachment_url: uploadedAttachmentUrl,
+          attachment_name: uploadedAttachmentName,
+          attachment_size: uploadedAttachmentSize,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || 'Failed to submit inquiry.');
+      }
       
       setSubmitStatus('success');
       // Reset form
@@ -153,8 +198,8 @@ function ContactFormContent() {
         website: ''
       });
       setAttachment(null);
-    } catch {
-      setErrorMessage('Server error processing your request. Please try again or email directly.');
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Server error processing your request. Please try again or email directly.');
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -406,16 +451,16 @@ function ContactFormContent() {
                 <label className="border-2 border-dashed border-steel/40 rounded-lg p-5 bg-offwhite flex flex-col items-center justify-center gap-1.5 hover:bg-steel/5 hover:border-orange/40 cursor-pointer transition-all duration-300">
                   <input
                     type="file"
-                    accept=".pdf,.xls,.xlsx,.doc,.docx,.zip"
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.dxf,.zip,.rar,.png,.jpg,.jpeg,.txt"
                     className="hidden"
                     onChange={handleFileChange}
                   />
                   <Upload className="w-6 h-6 text-steel" />
                   <span className="font-sans text-xs font-semibold text-navy">
-                    Click to attach specifications sheet or BoQ
+                    Click to attach specifications sheet, drawings or BoQ
                   </span>
                   <span className="font-sans text-[9px] text-graphite/50">
-                    PDF, EXCEL, WORD, ZIP up to 10MB
+                    PDF, EXCEL, WORD, DWG, ZIP, IMAGES up to 25MB
                   </span>
                 </label>
               ) : (

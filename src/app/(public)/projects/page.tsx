@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, Suspense } from 'react';
+import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '../../components/Navbar';
@@ -28,15 +28,33 @@ function ProjectsContent() {
   const searchParams = useSearchParams();
   const statusParam = searchParams.get('status');
 
+  const [projectsList, setProjectsList] = useState(projectsData);
+
+  useEffect(() => {
+    async function loadProjects() {
+      try {
+        const res = await fetch('/api/projects');
+        if (!res.ok) return;
+        const ct = res.headers.get('content-type');
+        if (!ct || !ct.includes('application/json')) return;
+        const data = await res.json();
+        if (data.ok && Array.isArray(data.data) && data.data.length > 0) {
+          setProjectsList(data.data);
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic projects:', err);
+      }
+    }
+    loadProjects();
+  }, []);
+
   const [prevStatusParam, setPrevStatusParam] = useState(statusParam);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState(statusParam || 'All');
   const [selectedIndustry, setSelectedIndustry] = useState('All');
   const [selectedService, setSelectedService] = useState('All');
-  // Completed projects default to 'ledger' (Table format). Ongoing projects default to 'grid' (Cards format).
   const [layoutMode, setLayoutMode] = useState<'grid' | 'ledger'>(statusParam === 'Completed' ? 'ledger' : 'grid');
 
-  // Adjust state during render when URL search param changes (avoids cascading render warning)
   if (statusParam !== prevStatusParam) {
     setPrevStatusParam(statusParam);
     if (statusParam) {
@@ -53,18 +71,18 @@ function ProjectsContent() {
 
   // Extract unique filters
   const industries = useMemo(() => {
-    const set = new Set(projectsData.map(p => p.industry));
+    const set = new Set(projectsList.map(p => p.industry));
     return ['All', ...Array.from(set)];
-  }, []);
+  }, [projectsList]);
 
   const services = useMemo(() => {
-    const set = new Set(projectsData.map(p => p.service));
+    const set = new Set(projectsList.map(p => p.service));
     return ['All', ...Array.from(set)];
-  }, []);
+  }, [projectsList]);
 
   // Filter projects logic
   const filteredProjects = useMemo(() => {
-    return projectsData.filter(project => {
+    return projectsList.filter(project => {
       const matchesSearch = 
         project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         project.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -76,7 +94,7 @@ function ProjectsContent() {
 
       return matchesSearch && matchesStatus && matchesIndustry && matchesService;
     });
-  }, [searchTerm, selectedStatus, selectedIndustry, selectedService]);
+  }, [projectsList, searchTerm, selectedStatus, selectedIndustry, selectedService]);
 
   return (
     <div className="flex flex-col min-h-screen">

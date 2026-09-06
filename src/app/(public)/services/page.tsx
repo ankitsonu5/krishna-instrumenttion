@@ -17,7 +17,23 @@ import {
   Calendar,
   ArrowRight,
   ShieldCheck,
-  AlertCircle
+  AlertCircle,
+  Gauge,
+  Factory,
+  Building2,
+  HardHat,
+  Flame,
+  Droplets,
+  Waves,
+  Compass,
+  SlidersHorizontal,
+  CircuitBoard,
+  Radio,
+  Cog,
+  Server,
+  Box,
+  FileText,
+  Briefcase
 } from 'lucide-react';
 
 const services = [
@@ -140,7 +156,64 @@ const services = [
   }
 ];
 
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Wrench,
+  Zap,
+  Settings,
+  Layers,
+  Cpu,
+  FileCheck,
+  Activity,
+  ShieldCheck,
+  Calendar,
+  CheckCircle2,
+  Gauge,
+  Factory,
+  Building2,
+  HardHat,
+  Flame,
+  Droplets,
+  Waves,
+  Compass,
+  Sliders: SlidersHorizontal,
+  CircuitBoard,
+  Radio,
+  Cog,
+  Server,
+  Box,
+  FileText,
+  Briefcase,
+};
+
 export default function ServicesPage() {
+  const [servicesData, setServicesData] = React.useState(services);
+
+  React.useEffect(() => {
+    async function loadServices() {
+      try {
+        const res = await fetch('/api/services');
+        if (!res.ok) return;
+        const ct = res.headers.get('content-type');
+        if (!ct || !ct.includes('application/json')) return;
+        const data = await res.json();
+        if (data.ok && Array.isArray(data.data) && data.data.length > 0) {
+          setServicesData(
+            data.data.map((item: any) => ({
+              title: item.title,
+              slug: item.slug,
+              icon: iconMap[item.icon_name] || Wrench,
+              desc: item.short_desc,
+              bullets: item.bullets || [],
+            }))
+          );
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic services:', err);
+      }
+    }
+    loadServices();
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -167,35 +240,50 @@ export default function ServicesPage() {
             }} />
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10 w-full">
-            <div className="max-w-3xl flex flex-col gap-5">
-              <span className="font-mono text-xs sm:text-sm text-orange font-semibold tracking-widest uppercase flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-orange animate-pulse" />
-                OUR INDUSTRIAL SERVICES
-              </span>
-
-              <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
-                End-to-End Engineering Support for Industrial Projects
-              </h1>
-
-              <p className="font-sans text-base sm:text-lg text-steel/90 leading-relaxed">
-                KIW provides coordinated engineering, installation, automation, testing, commissioning, calibration, maintenance and site execution services for industrial facilities across India.
-              </p>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div className="max-w-3xl">
+              <motion.span 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="font-mono text-xs text-orange font-bold uppercase tracking-widest block mb-2"
+              >
+                Comprehensive Execution Services
+              </motion.span>
+              <motion.h1 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4"
+              >
+                End-to-End Instrumentation, <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-steel to-white/90">
+                  Electrical & Automation Services.
+                </span>
+              </motion.h1>
+              <motion.p 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="font-sans text-sm sm:text-base text-steel/90 leading-relaxed mb-6"
+              >
+                From initial site mobilization and impulse pipe fitting to multi-loop testing, HART calibration and DCS integration, we deliver execution reliability across major industrial sectors.
+              </motion.p>
             </div>
           </div>
         </section>
 
         {/* SERVICES GRID SECTION */}
-        <section className="py-20 bg-offwhite">
+        <section className="py-16 sm:py-20 bg-offwhite">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            {/* Scope validation disclaimer banner */}
-            <div className="mb-12 bg-white border border-steel/30 rounded-lg p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
-              <div className="flex gap-3 items-center">
-                <AlertCircle className="w-5 h-5 text-orange flex-shrink-0" />
-                <span className="font-sans text-sm text-graphite/80 font-medium">
-                  <strong>Scope Validation Notice:</strong> All detailed technical claims must be approved by KIW engineering supervisors before final publication.
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 pb-4 border-b border-steel/20 gap-4">
+              <div>
+                <span className="font-mono text-xs text-orange font-bold uppercase tracking-widest block mb-1">
+                  Our Capabilities
                 </span>
+                <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-navy">
+                  Specialized Industrial Service Disciplines
+                </h2>
               </div>
               <div className="bg-safety-green/10 text-safety-green px-3.5 py-1 rounded text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5 flex-shrink-0">
                 <ShieldCheck className="w-4 h-4" />
@@ -205,7 +293,7 @@ export default function ServicesPage() {
 
             {/* Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {services.map((svc, i) => {
+              {servicesData.map((svc, i) => {
                 const Icon = svc.icon;
                 return (
                   <motion.div 
