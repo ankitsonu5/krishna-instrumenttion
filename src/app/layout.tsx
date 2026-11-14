@@ -21,6 +21,13 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Krishna Instrumentation",
   description: "Premium industrial, engineering-led and technology-forward solutions",
+  icons: {
+    icon: [
+      { url: "/krishna_favicon.png", type: "image/png" },
+    ],
+    shortcut: "/krishna_favicon.png",
+    apple: "/krishna_favicon.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -47,6 +47,9 @@ app.use(
   })
 );
 
+// Favicon direct route
+app.get("/favicon.ico", (_req, res) => res.redirect(301, "/krishna_favicon.png"));
+
 // Health check endpoint
 app.get("/healthz", (_req, res) =>
   res.json({ ok: true, status: "healthy", uptime: process.uptime() })
